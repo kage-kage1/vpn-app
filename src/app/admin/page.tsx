@@ -1618,7 +1618,8 @@ function ProductsManagement({ showNotification }: { showNotification: (message: 
     description: '',
     features: [''],
     category: 'Premium',
-    isActive: true
+    isActive: true,
+    logo: ''
   });
 
   useEffect(() => {
@@ -1665,7 +1666,8 @@ function ProductsManagement({ showNotification }: { showNotification: (message: 
           description: '',
           features: [''],
           category: 'Premium',
-          isActive: true
+          isActive: true,
+          logo: ''
         });
         fetchProducts();
         showNotification('Product added successfully', 'success');
@@ -1955,6 +1957,20 @@ function ProductsManagement({ showNotification }: { showNotification: (message: 
               </div>
               
               <div>
+                <label className="block text-sm text-gray-400 mb-2">Logo URL</label>
+                <input
+                  type="text"
+                  value={newProduct.logo}
+                  onChange={(e) => setNewProduct({...newProduct, logo: e.target.value})}
+                  className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-neon-cyan"
+                  placeholder="https://icon2.cleanpng.com/20180613/xrg/aa738sihu.webp"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Local ပုံများ: /images/expressvpn-logo.png သို့မဟုတ် External links: https://example.com/logo.png
+                </p>
+              </div>
+              
+              <div>
                 <label className="block text-sm text-gray-400 mb-2">Description</label>
                 <textarea
                   value={newProduct.description}
@@ -2093,6 +2109,20 @@ function ProductsManagement({ showNotification }: { showNotification: (message: 
                   <option value="Standard">Standard</option>
                   <option value="Basic">Basic</option>
                 </select>
+              </div>
+              
+              <div>
+                <label className="block text-sm text-gray-400 mb-2">Logo URL</label>
+                <input
+                  type="text"
+                  value={editingProduct.logo || ''}
+                  onChange={(e) => setEditingProduct({...editingProduct, logo: e.target.value})}
+                  className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-neon-cyan"
+                  placeholder="https://icon2.cleanpng.com/20180613/xrg/aa738sihu.webp"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Local ပုံများ: /images/expressvpn-logo.png သို့မဟုတ် External links: https://example.com/logo.png
+                </p>
               </div>
               
               <div>

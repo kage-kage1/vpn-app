@@ -60,7 +60,8 @@ const ProductSchema = new Schema<IProduct>({
   },
   logo: {
     type: String,
-    required: true,
+    required: false,
+    default: '',
   },
   rating: {
     type: Number,

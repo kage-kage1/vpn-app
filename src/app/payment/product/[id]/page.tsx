@@ -9,22 +9,26 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/useToast';
 import { ToastContainer } from '@/components/ui/Toast';
 
-const products = {
-  '1': { name: 'ExpressVPN', duration: '1 Month', price: 15000 },
-  '2': { name: 'ExpressVPN', duration: '6 Months', price: 75000 },
-  '3': { name: 'ExpressVPN', duration: '12 Months', price: 120000 },
-  '4': { name: 'NordVPN', duration: '1 Month', price: 12000 },
-  '5': { name: 'NordVPN', duration: '6 Months', price: 45000 },
-  '6': { name: 'NordVPN', duration: '12 Months', price: 80000 },
-  '7': { name: 'Surfshark', duration: '1 Month', price: 10000 },
-  '8': { name: 'Surfshark', duration: '6 Months', price: 35000 },
-  '9': { name: 'Surfshark', duration: '12 Months', price: 60000 },
-};
+interface Product {
+  _id: string;
+  name: string;
+  provider: string;
+  duration: string;
+  price: number;
+  originalPrice?: number;
+  features: string[];
+  category: 'Premium' | 'Standard';
+  isActive: boolean;
+  stock: number;
+  logo: string;
+  rating: number;
+}
 
 export default function DirectPaymentPage() {
   const params = useParams();
   const productId = params.id as string;
-  const product = products[productId as keyof typeof products];
+  const [product, setProduct] = useState<Product | null>(null);
+  const [productLoading, setProductLoading] = useState(true);
   const { isAuthenticated, loading, user } = useAuth();
   const { toasts, removeToast, success, error } = useToast();
 
@@ -43,6 +47,33 @@ export default function DirectPaymentPage() {
   });
   const [copiedNumber, setCopiedNumber] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Fetch product from database
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        setProductLoading(true);
+        const response = await fetch(`/api/products/${productId}`);
+        if (response.ok) {
+          const data = await response.json();
+          setProduct(data.product);
+        } else {
+          const errorData = await response.json();
+          console.error('Failed to fetch product:', errorData.error);
+          setProduct(null);
+        }
+      } catch (error) {
+        console.error('Error fetching product:', error);
+        setProduct(null);
+      } finally {
+        setProductLoading(false);
+      }
+    };
+
+    if (productId) {
+      fetchProduct();
+    }
+  }, [productId]);
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -208,12 +239,12 @@ export default function DirectPaymentPage() {
         },
         items: [{
           id: productId,
-          name: product.name,
-          price: product.price,
-          duration: product.duration,
+          name: product?.name || '',
+          price: product?.price || 0,
+          duration: product?.duration || '',
           quantity: 1
         }],
-        total: product.price,
+        total: product?.price || 0,
         status: 'pending_payment'
       };
 
@@ -240,7 +271,7 @@ export default function DirectPaymentPage() {
         transactionId: formData.transactionId.trim(),
         senderName: formData.senderName.trim(),
         senderPhone: formData.senderPhone.trim(),
-        amount: product.price,
+        amount: product?.price || 0,
       };
 
       const paymentResponse = await fetch('/api/payment/submit', {
@@ -269,7 +300,7 @@ export default function DirectPaymentPage() {
   };
 
   // Show loading while checking authentication
-  if (loading) {
+  if (loading || productLoading) {
     return (
       <div className="min-h-screen bg-primary-dark flex items-center justify-center">
         <div className="text-center">
@@ -353,13 +384,37 @@ export default function DirectPaymentPage() {
               
               <div className="space-y-4 mb-6">
                 <div className="flex justify-between items-center">
-                  <div>
-                    <p className="font-medium">{product.name}</p>
-                    <p className="text-sm text-gray-400">{product.duration}</p>
-                    <p className="text-sm text-gray-400">Qty: 1</p>
+                  <div className="flex items-center space-x-3">
+                    <div className="flex-shrink-0">
+                      {product?.logo && (product.logo.startsWith('/images/') || product.logo.startsWith('http')) ? (
+                        <>
+                          <img 
+                            src={product.logo} 
+                            alt={`${product.provider} logo`}
+                            className="h-12 w-auto object-contain"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.style.display = 'none';
+                              const fallbackSpan = target.parentElement?.querySelector('.fallback-emoji') as HTMLSpanElement;
+                              if (fallbackSpan) {
+                                fallbackSpan.style.display = 'block';
+                              }
+                            }}
+                          />
+                          <div className="text-2xl fallback-emoji hidden">{product?.logo || '🔐'}</div>
+                        </>
+                      ) : (
+                        <div className="text-2xl">{product?.logo || '🔐'}</div>
+                      )}
+                    </div>
+                    <div>
+                      <p className="font-medium">{product?.name}</p>
+                      <p className="text-sm text-gray-400">{product?.duration}</p>
+                      <p className="text-sm text-gray-400">Qty: 1</p>
+                    </div>
                   </div>
                   <p className="font-bold text-neon-cyan">
-                    {product.price.toLocaleString()} Ks
+                    {product?.price.toLocaleString()} Ks
                   </p>
                 </div>
               </div>
@@ -367,7 +422,7 @@ export default function DirectPaymentPage() {
               <div className="border-t border-gray-600 pt-4">
                 <div className="flex justify-between items-center text-xl font-bold">
                   <span>Total</span>
-                  <span className="text-neon-cyan">{product.price.toLocaleString()} Ks</span>
+                  <span className="text-neon-cyan">{product?.price.toLocaleString()} Ks</span>
                 </div>
               </div>
 

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import Order from '@/lib/models/Order';
 import { requireAdmin } from '@/lib/auth';
+import { sendVPNCredentialsEmail } from '@/lib/email';
 
 export async function POST(request: NextRequest) {
   try {
@@ -41,8 +42,18 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    // TODO: Send email notification to customer
-    // await sendVPNCredentialsEmail(order.customerEmail, vpnCredentials);
+    // Send email notification to customer
+    try {
+      await sendVPNCredentialsEmail(order.customerEmail, vpnCredentials, {
+        orderId: order._id,
+        customerName: order.customerName,
+        total: order.total
+      });
+      console.log('VPN credentials email sent successfully to:', order.customerEmail);
+    } catch (emailError) {
+      console.error('Failed to send VPN credentials email:', emailError);
+      // Don't fail the entire operation if email fails
+    }
 
     return NextResponse.json({
       message: 'VPN credentials delivered successfully',

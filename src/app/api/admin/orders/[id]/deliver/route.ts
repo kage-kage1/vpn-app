@@ -3,6 +3,7 @@ import dbConnect from '@/lib/mongodb';
 import Payment from '@/lib/models/Payment';
 import Order from '@/lib/models/Order';
 import { requireAdmin } from '@/lib/auth';
+import { sendVPNCredentialsEmail } from '@/lib/email';
 
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -54,6 +55,21 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       },
       { new: true }
     ).populate('userId', 'name email').populate('paymentId');
+    
+    // Send email notification to customer
+    try {
+      if (updatedOrder && updatedOrder.userId && updatedOrder.userId.email) {
+        await sendVPNCredentialsEmail(updatedOrder.userId.email, vpnCredentials, {
+          orderId: updatedOrder._id,
+          customerName: updatedOrder.userId.name,
+          total: updatedOrder.total
+        });
+        console.log('VPN credentials email sent successfully to:', updatedOrder.userId.email);
+      }
+    } catch (emailError) {
+      console.error('Failed to send VPN credentials email:', emailError);
+      // Don't fail the entire operation if email fails
+    }
     
     return NextResponse.json({
       message: 'VPN credentials delivered successfully',
