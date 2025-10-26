@@ -2,10 +2,22 @@ import { NextRequest, NextResponse } from 'next/server';
 import { connectDB } from '@/lib/mongodb';
 import Payment from '@/lib/models/Payment';
 import Order from '@/lib/models/Order';
+import { requireAuth } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
   try {
     await connectDB();
+    
+    // Require user authentication
+    let user;
+    try {
+      user = requireAuth(request);
+    } catch (error) {
+      return NextResponse.json(
+        { error: 'Authentication required' },
+        { status: 401 }
+      );
+    }
     
     const { items, total, userId, status } = await request.json();
 
@@ -14,6 +26,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: 'Items, total နှင့် user ID လိုအပ်ပါတယ်' },
         { status: 400 }
+      );
+    }
+
+    // Ensure the authenticated user can only create orders for themselves
+    if (user.userId !== userId) {
+      return NextResponse.json(
+        { error: 'သင်သည် အခြားသူ၏ order မဖန်တီးနိုင်ပါ' },
+        { status: 403 }
       );
     }
 
