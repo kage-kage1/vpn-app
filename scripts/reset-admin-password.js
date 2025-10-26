@@ -59,7 +59,9 @@ async function resetAdminPassword() {
     await connectDB();
     
     const adminEmail = 'admin@kagevpn.com';
-    const newPassword = 'admin123'; // Default password
+    const newPassword = process.env.ADMIN_DEFAULT_PASSWORD || 'admin123'; // Use env var or default
+    
+    console.log('⚠️  WARNING: Using default password. Please change it after first login!');
     
     // Hash the new password
     const hashedPassword = await bcrypt.hash(newPassword, 12);

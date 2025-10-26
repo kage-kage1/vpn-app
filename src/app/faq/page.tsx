@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { HelpCircle, ChevronDown, ChevronUp, Search, Shield, CreditCard, Clock, Users, MessageSquare } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const faqCategories = [
   {
@@ -114,6 +114,38 @@ export default function FAQPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [openItems, setOpenItems] = useState<number[]>([]);
+  const [faqContent, setFaqContent] = useState(faqs);
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const response = await fetch('/api/settings', {
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache'
+          }
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (data.settings && data.settings.faqContent) {
+            try {
+              const dynamicFAQs = JSON.parse(data.settings.faqContent);
+              if (Array.isArray(dynamicFAQs) && dynamicFAQs.length > 0) {
+                setFaqContent(dynamicFAQs);
+              }
+            } catch (parseError) {
+              console.error('Error parsing FAQ content:', parseError);
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching settings:', error);
+      }
+    };
+
+    fetchSettings();
+  }, []);
 
   const toggleItem = (index: number) => {
     setOpenItems(prev => 
@@ -123,7 +155,7 @@ export default function FAQPage() {
     );
   };
 
-  const filteredFAQs = faqs.filter(faq => {
+  const filteredFAQs = faqContent.filter(faq => {
     const matchesSearch = faq.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          faq.answer.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = selectedCategory === 'All' || faq.category === selectedCategory;

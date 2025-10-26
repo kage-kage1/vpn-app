@@ -96,7 +96,7 @@ const sampleProducts = [
     category: 'Premium',
     isActive: true,
     stock: 50,
-    logo: '/images/expressvpn-logo.png',
+    logo: 'https://seeklogo.com/images/E/expressvpn-logo-7A5A5F5F5F-seeklogo.com.png',
     rating: 5
   },
   {
@@ -115,7 +115,7 @@ const sampleProducts = [
     category: 'Premium',
     isActive: true,
     stock: 30,
-    logo: '/images/expressvpn-logo.png',
+    logo: 'https://seeklogo.com/images/E/expressvpn-logo-7A5A5F5F5F-seeklogo.com.png',
     rating: 5
   },
   {
@@ -134,7 +134,7 @@ const sampleProducts = [
     category: 'Premium',
     isActive: true,
     stock: 20,
-    logo: '/images/expressvpn-logo.png',
+    logo: 'https://seeklogo.com/images/E/expressvpn-logo-7A5A5F5F5F-seeklogo.com.png',
     rating: 5
   },
   {
@@ -153,7 +153,7 @@ const sampleProducts = [
     category: 'Premium',
     isActive: true,
     stock: 40,
-    logo: '/images/nordvpn-logo.png',
+    logo: 'https://seeklogo.com/images/N/nordvpn-logo-B1B4F8E5F5-seeklogo.com.png',
     rating: 4.8
   },
   {
@@ -172,7 +172,7 @@ const sampleProducts = [
     category: 'Premium',
     isActive: true,
     stock: 25,
-    logo: '/images/nordvpn-logo.png',
+    logo: 'https://seeklogo.com/images/N/nordvpn-logo-B1B4F8E5F5-seeklogo.com.png',
     rating: 4.8
   },
   {
@@ -191,7 +191,7 @@ const sampleProducts = [
     category: 'Premium',
     isActive: true,
     stock: 15,
-    logo: '/images/nordvpn-logo.png',
+    logo: 'https://seeklogo.com/images/N/nordvpn-logo-B1B4F8E5F5-seeklogo.com.png',
     rating: 4.8
   },
   {
@@ -210,7 +210,7 @@ const sampleProducts = [
     category: 'Standard',
     isActive: true,
     stock: 60,
-    logo: '/images/surfshark-logo.png',
+    logo: 'https://iconduck.com/api/icons/1959/download?format=png&size=256',
     rating: 4.7
   },
   {
@@ -229,7 +229,7 @@ const sampleProducts = [
     category: 'Standard',
     isActive: true,
     stock: 35,
-    logo: '/images/surfshark-logo.png',
+    logo: 'https://iconduck.com/api/icons/1959/download?format=png&size=256',
     rating: 4.7
   },
   {
@@ -248,7 +248,7 @@ const sampleProducts = [
     category: 'Standard',
     isActive: true,
     stock: 20,
-    logo: '/images/surfshark-logo.png',
+    logo: 'https://iconduck.com/api/icons/1959/download?format=png&size=256',
     rating: 4.7
   },
   {
@@ -267,7 +267,7 @@ const sampleProducts = [
     category: 'Standard',
     isActive: true,
     stock: 45,
-    logo: '/images/cyberghost-logo.png',
+    logo: 'https://seeklogo.com/images/C/cyberghost-vpn-logo-B1B4F8E5F5-seeklogo.com.png',
     rating: 4.6
   }
 ];

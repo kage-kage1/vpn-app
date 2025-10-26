@@ -105,9 +105,19 @@ export default function OrdersPage() {
         return;
       }
       
+      // Get the JWT token from localStorage
+      const token = localStorage.getItem('user-token');
+      
+      if (!token) {
+        console.error('No authentication token found');
+        setError('အကောင့်ဝင်ရန် လိုအပ်ပါတယ်');
+        return;
+      }
+      
       const response = await fetch('/api/profile/orders', {
         headers: {
-          'user-id': user._id,
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
         },
       });
 

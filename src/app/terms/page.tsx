@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { FileText, Scale, AlertCircle, CheckCircle, XCircle, Clock } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
 const termsSections = [
   {
@@ -68,6 +69,32 @@ const paymentTerms = [
 ];
 
 export default function TermsPage() {
+  const [termsContent, setTermsContent] = useState('');
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const response = await fetch('/api/settings', {
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache'
+          }
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (data.settings && data.settings.termsOfServiceText) {
+            setTermsContent(data.settings.termsOfServiceText);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching settings:', error);
+      }
+    };
+
+    fetchSettings();
+  }, []);
+
   return (
     <div className="min-h-screen bg-primary-dark text-white">
       {/* Hero Section */}
@@ -94,55 +121,106 @@ export default function TermsPage() {
         </div>
       </section>
 
-      {/* Introduction */}
-      <section className="py-16">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Dynamic Terms Content */}
+      {termsContent && (
+        <section className="py-16">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className="bg-primary-secondary/30 rounded-2xl p-8 border border-primary-secondary"
+            >
+              <div 
+                className="text-gray-300 leading-relaxed prose prose-invert max-w-none"
+                dangerouslySetInnerHTML={{ __html: termsContent }}
+              />
+            </motion.div>
+          </div>
+        </section>
+      )}
+
+      {/* Default content when no custom terms content is available */}
+      {!termsContent && (
+        <>
+          {/* Introduction */}
+          <section className="py-16">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8 }}
+                className="bg-primary-secondary/30 rounded-2xl p-8 border border-primary-secondary"
+              >
+                <h2 className="text-2xl font-orbitron font-bold mb-4 text-neon-cyan">
+                  Welcome to Kage VPN Store
+                </h2>
+                <p className="text-gray-300 leading-relaxed">
+                  These Terms of Service ("Terms") govern your use of the Kage VPN Store website 
+                  and services operated by Kage VPN Store ("we," "us," or "our"). By accessing 
+                  or using our service, you agree to be bound by these Terms. If you disagree 
+                  with any part of these terms, then you may not access the service.
+                </p>
+              </motion.div>
+            </div>
+          </section>
+
+          {/* Terms Sections */}
+          <section className="py-16">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="grid gap-8">
+                {termsSections.map((section, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: index * 0.1 }}
+                    className="bg-primary-secondary/20 rounded-xl p-8 border border-primary-secondary hover:border-neon-cyan/50 transition-colors"
+                  >
+                    <div className="flex items-center mb-6">
+                      <section.icon className="h-8 w-8 text-neon-cyan mr-4" />
+                      <h3 className="text-2xl font-orbitron font-bold">{section.title}</h3>
+                    </div>
+                    <ul className="space-y-3">
+                      {section.content.map((item, itemIndex) => (
+                        <li key={itemIndex} className="flex items-start">
+                          <div className="w-2 h-2 bg-neon-cyan rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                          <span className="text-gray-300">{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* Payment Terms */}
+          <section className="py-16 bg-primary-secondary/30">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="bg-primary-secondary/30 rounded-2xl p-8 border border-primary-secondary"
           >
-            <h2 className="text-2xl font-orbitron font-bold mb-4 text-neon-cyan">
-              Welcome to Kage VPN Store
+            <h2 className="text-3xl font-orbitron font-bold mb-12 text-center">
+              Payment <span className="text-neon-cyan">Terms</span>
             </h2>
-            <p className="text-gray-300 leading-relaxed">
-              These Terms of Service ("Terms") govern your use of the Kage VPN Store website 
-              and services operated by Kage VPN Store ("we," "us," or "our"). By accessing 
-              or using our service, you agree to be bound by these Terms. If you disagree 
-              with any part of these terms, then you may not access the service.
-            </p>
+            <div className="grid md:grid-cols-2 gap-8">
+              {paymentTerms.map((term, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  className="bg-primary-dark/50 rounded-xl p-6 border border-primary-secondary"
+                >
+                  <h3 className="text-xl font-semibold mb-4 text-neon-cyan">{term.title}</h3>
+                  <p className="text-gray-300">{term.description}</p>
+                </motion.div>
+              ))}
+            </div>
           </motion.div>
-        </div>
-      </section>
-
-      {/* Terms Sections */}
-      <section className="py-16">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-8">
-            {termsSections.map((section, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                className="bg-primary-secondary/20 rounded-xl p-8 border border-primary-secondary hover:border-neon-cyan/50 transition-colors"
-              >
-                <div className="flex items-center mb-6">
-                  <section.icon className="h-8 w-8 text-neon-cyan mr-4" />
-                  <h3 className="text-2xl font-orbitron font-bold">{section.title}</h3>
-                </div>
-                <ul className="space-y-3">
-                  {section.content.map((item, itemIndex) => (
-                    <li key={itemIndex} className="flex items-start">
-                      <div className="w-2 h-2 bg-neon-cyan rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                      <span className="text-gray-300">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </motion.div>
-            ))}
-          </div>
         </div>
       </section>
 
@@ -266,6 +344,8 @@ export default function TermsPage() {
           </motion.div>
         </div>
       </section>
+        </>
+      )}
     </div>
   );
 }

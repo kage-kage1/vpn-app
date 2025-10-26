@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { RefreshCw, Clock, CheckCircle, XCircle, AlertTriangle, CreditCard } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
 const refundPolicies = [
   {
@@ -76,6 +77,24 @@ const refundProcess = [
 ];
 
 export default function RefundPage() {
+  const [refundContent, setRefundContent] = useState('');
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const response = await fetch('/api/settings');
+        if (response.ok) {
+          const data = await response.json();
+          setRefundContent(data.settings?.refundPolicyText || '');
+        }
+      } catch (error) {
+        console.error('Error fetching settings:', error);
+      }
+    };
+
+    fetchSettings();
+  }, []);
+
   return (
     <div className="min-h-screen bg-primary-dark text-white">
       {/* Hero Section */}
@@ -101,6 +120,27 @@ export default function RefundPage() {
         </div>
       </section>
 
+      {/* Dynamic Content */}
+      {refundContent && (
+        <section className="py-16">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className="bg-primary-secondary/30 rounded-2xl p-8 border border-primary-secondary"
+            >
+              <div className="prose prose-invert max-w-none">
+                <div dangerouslySetInnerHTML={{ __html: refundContent.replace(/\n/g, '<br>') }} />
+              </div>
+            </motion.div>
+          </div>
+        </section>
+      )}
+
+      {/* Default content when no custom refund content is available */}
+      {!refundContent && (
+        <>
       {/* Quick Overview */}
       <section className="py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -314,6 +354,8 @@ export default function RefundPage() {
           </motion.div>
         </div>
       </section>
+        </>
+      )}
     </div>
   );
 }

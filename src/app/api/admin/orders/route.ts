@@ -15,8 +15,16 @@ export async function GET(request: NextRequest) {
     }
     
     // Require admin authentication
-    const admin = requireAdmin(request);
-    console.log('Admin authenticated:', admin);
+    try {
+      const admin = requireAdmin(request);
+      console.log('Admin authenticated:', admin);
+    } catch (authError) {
+      console.error('Authentication error:', authError);
+      return NextResponse.json(
+        { error: 'Unauthorized - No token provided' },
+        { status: 401 }
+      );
+    }
     
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');
@@ -75,6 +83,22 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('Error fetching orders:', error);
+    
+    // Handle authentication errors specifically
+    if (error instanceof Error && error.message === 'Authentication required') {
+      return NextResponse.json(
+        { error: 'Unauthorized - No token provided' },
+        { status: 401 }
+      );
+    }
+    
+    if (error instanceof Error && error.message === 'Admin access required') {
+      return NextResponse.json(
+        { error: 'Forbidden - Admin access required' },
+        { status: 403 }
+      );
+    }
+    
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
       { error: 'Failed to fetch orders', details: errorMessage },

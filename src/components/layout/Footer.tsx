@@ -3,9 +3,80 @@
 import { motion } from 'framer-motion';
 import { MessageCircle, Mail, Facebook, Shield, Zap, Globe } from 'lucide-react';
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
+  const [footerText, setFooterText] = useState('Your trusted source for premium VPN accounts. Fast, secure, and reliable access to global content.');
+  const [socialLinks, setSocialLinks] = useState([
+    { icon: MessageCircle, href: 'https://t.me/kagevpn', label: 'Telegram' },
+    { icon: Mail, href: 'mailto:info@kagevpn.com', label: 'Email' },
+    { icon: Facebook, href: 'https://facebook.com/kagevpn', label: 'Facebook' },
+  ]);
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const response = await fetch('/api/settings', {
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache'
+          }
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (data.settings) {
+            if (data.settings.footerText) {
+              setFooterText(data.settings.footerText);
+            }
+            
+            // Update social links with dynamic data
+            const updatedSocialLinks = [
+              { 
+                icon: MessageCircle, 
+                href: data.settings.telegramLink || 'https://t.me/kagevpn', 
+                label: 'Telegram' 
+              },
+              { 
+                icon: Mail, 
+                href: `mailto:${data.settings.emailLink || 'info@kagevpn.com'}`, 
+                label: 'Email' 
+              },
+              { 
+                icon: Facebook, 
+                href: data.settings.facebookLink || 'https://facebook.com/kagevpn', 
+                label: 'Facebook' 
+              },
+            ];
+            
+            // Add additional social links if they exist
+            if (data.settings.viberLink) {
+              updatedSocialLinks.push({
+                icon: MessageCircle,
+                href: data.settings.viberLink,
+                label: 'Viber'
+              });
+            }
+            
+            if (data.settings.whatsappLink) {
+              updatedSocialLinks.push({
+                icon: MessageCircle,
+                href: data.settings.whatsappLink,
+                label: 'WhatsApp'
+              });
+            }
+            
+            setSocialLinks(updatedSocialLinks);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching settings:', error);
+      }
+    };
+
+    fetchSettings();
+  }, []);
 
   const footerLinks = {
     company: [
@@ -28,12 +99,6 @@ export function Footer() {
     ],
   };
 
-  const socialLinks = [
-    { icon: MessageCircle, href: 'https://t.me/kagevpn', label: 'Telegram' },
-    { icon: Mail, href: 'mailto:info@kagevpn.com', label: 'Email' },
-    { icon: Facebook, href: 'https://facebook.com/kagevpn', label: 'Facebook' },
-  ];
-
   const features = [
     { icon: Shield, text: 'Secure & Private' },
     { icon: Zap, text: 'Fast Delivery' },
@@ -51,7 +116,7 @@ export function Footer() {
               Kage VPN
             </Link>
             <p className="text-gray-400 mb-6">
-              Your trusted source for premium VPN accounts. Fast, secure, and reliable access to global content.
+              {footerText}
             </p>
             
             {/* Features */}

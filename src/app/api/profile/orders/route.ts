@@ -3,19 +3,31 @@ import dbConnect from '@/lib/mongodb';
 import Payment from '@/lib/models/Payment';
 import Order from '@/lib/models/Order';
 import mongoose from 'mongoose';
+import { getUserFromRequest } from '@/lib/auth';
 
 export async function GET(request: NextRequest) {
   try {
     await dbConnect();
     
-    const userId = request.headers.get('user-id'); // Mock header
+    // Get user ID from JWT token or user-id header (for backward compatibility)
+    let userId: string | null = null;
+    
+    // Try to get user from JWT token first
+    const user = getUserFromRequest(request);
+    if (user) {
+      userId = user.userId;
+    } else {
+      // Fallback to user-id header for backward compatibility
+      userId = request.headers.get('user-id');
+    }
+    
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '10');
     
     if (!userId) {
       return NextResponse.json(
-        { error: 'Unauthorized' },
+        { error: 'Unauthorized - User ID required' },
         { status: 401 }
       );
     }

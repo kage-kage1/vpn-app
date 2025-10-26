@@ -1,7 +1,9 @@
 'use client';
 
+import React from 'react';
 import { motion } from 'framer-motion';
 import { Shield, Eye, Lock, Database, UserCheck, AlertTriangle } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
 const privacySections = [
   {
@@ -50,6 +52,32 @@ const privacySections = [
 ];
 
 export default function PrivacyPage() {
+  const [privacyContent, setPrivacyContent] = useState('');
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const response = await fetch('/api/settings', {
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache'
+          }
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (data.settings && data.settings.privacyPolicyText) {
+            setPrivacyContent(data.settings.privacyPolicyText);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching settings:', error);
+      }
+    };
+
+    fetchSettings();
+  }, []);
+
   return (
     <div className="min-h-screen bg-primary-dark text-white">
       {/* Hero Section */}
@@ -97,6 +125,27 @@ export default function PrivacyPage() {
         </div>
       </section>
 
+      {/* Privacy Content */}
+      {privacyContent ? (
+        <section className="py-16">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className="bg-primary-secondary/30 rounded-2xl p-8 border border-primary-secondary"
+            >
+              <div className="prose prose-invert max-w-none">
+                <div 
+                  className="text-gray-300 leading-relaxed whitespace-pre-wrap"
+                  dangerouslySetInnerHTML={{ __html: privacyContent }}
+                />
+              </div>
+            </motion.div>
+          </div>
+        </section>
+      ) : (
+        <>
       {/* Privacy Sections */}
       <section className="py-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -110,7 +159,7 @@ export default function PrivacyPage() {
                 className="bg-primary-secondary/20 rounded-xl p-8 border border-primary-secondary hover:border-neon-cyan/50 transition-colors"
               >
                 <div className="flex items-center mb-6">
-                  <section.icon className="h-8 w-8 text-neon-cyan mr-4" />
+                  {React.createElement(section.icon, { className: "h-8 w-8 text-neon-cyan mr-4" })}
                   <h3 className="text-2xl font-orbitron font-bold">{section.title}</h3>
                 </div>
                 <ul className="space-y-3">
@@ -219,6 +268,8 @@ export default function PrivacyPage() {
           </motion.div>
         </div>
       </section>
+        </>
+      )}
     </div>
   );
 }

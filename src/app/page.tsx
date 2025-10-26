@@ -100,6 +100,17 @@ export default function HomePage() {
   const [displayedProducts, setDisplayedProducts] = useState<HomeProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [promoBannerText, setPromoBannerText] = useState('🔥 Buy 1 Year Plan – Get 1 Month Free 🔥 Limited Time Offer! 🔥 Buy 1 Year Plan – Get 1 Month Free 🔥');
+  const [promoBannerEnabled, setPromoBannerEnabled] = useState(true);
+  const [heroTitle, setHeroTitle] = useState('Secure Your Internet with Kage VPN Store');
+  const [heroSubtitle, setHeroSubtitle] = useState('Buy ExpressVPN, NordVPN, and more — fast, safe, and local.');
+  const [featuresTitle, setFeaturesTitle] = useState('Why Choose Kage VPN Store?');
+  const [featuresSubtitle, setFeaturesSubtitle] = useState('We provide the best VPN services with unmatched quality and support.');
+  const [productsTitle, setProductsTitle] = useState('Premium VPN Plans');
+  const [productsSubtitle, setProductsSubtitle] = useState('Choose from our selection of premium VPN services');
+  const [testimonialsTitle, setTestimonialsTitle] = useState('What Our Customers Say');
+  const [testimonialsSubtitle, setTestimonialsSubtitle] = useState('Hear from our satisfied customers about their experience.');
+  const [settingsLoaded, setSettingsLoaded] = useState(false);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -131,6 +142,81 @@ export default function HomePage() {
     };
 
     fetchProducts();
+  }, []);
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        console.log('Fetching settings from /api/settings...');
+        const response = await fetch('/api/settings', {
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+          }
+        });
+        console.log('Settings response status:', response.status);
+        
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Settings data received:', data);
+          
+          if (data.settings) {
+            // Check for maintenance mode first
+            if (data.settings.maintenanceMode) {
+              window.location.href = '/maintenance';
+              return;
+            }
+            
+            console.log('Current promoBannerText:', promoBannerText);
+            console.log('New promoBannerText from API:', data.settings.promoBannerText);
+            console.log('promoBannerEnabled from API:', data.settings.promoBannerEnabled);
+            console.log('Raw settings object:', JSON.stringify(data.settings, null, 2));
+            
+            setPromoBannerText(data.settings.promoBannerText);
+            setPromoBannerEnabled(data.settings.promoBannerEnabled);
+            setHeroTitle(data.settings.heroTitle || 'Secure Your Internet with Kage VPN Store');
+            setHeroSubtitle(data.settings.heroSubtitle || 'Buy ExpressVPN, NordVPN, and more — fast, safe, and local.');
+            setFeaturesTitle(data.settings.featuresTitle || 'Why Choose Kage VPN Store?');
+            setFeaturesSubtitle(data.settings.featuresSubtitle || 'We provide the best VPN services with unmatched quality and support.');
+            setProductsTitle(data.settings.productsTitle || 'Premium VPN Plans');
+            setProductsSubtitle(data.settings.productsSubtitle || 'Choose from our selection of premium VPN services');
+            setTestimonialsTitle(data.settings.testimonialsTitle || 'What Our Customers Say');
+            setTestimonialsSubtitle(data.settings.testimonialsSubtitle || 'Hear from our satisfied customers about their experience.');
+            setSettingsLoaded(true);
+            
+            // Force a re-render by updating the DOM
+            console.log('Settings loaded:', {
+              featuresTitle: data.settings.featuresTitle,
+              productsTitle: data.settings.productsTitle,
+              testimonialsTitle: data.settings.testimonialsTitle
+            });
+            setTimeout(() => {
+              console.log('Settings updated, promoBannerText is now:', data.settings.promoBannerText);
+              console.log('State values after update:', {
+                promoBannerText,
+                promoBannerEnabled,
+                heroTitle,
+                featuresTitle,
+                productsTitle,
+                testimonialsTitle
+              });
+            }, 100);
+          }
+        } else {
+          console.error('Failed to fetch settings, status:', response.status);
+          const errorText = await response.text();
+          console.error('Error response body:', errorText);
+        }
+      } catch (error) {
+        console.error('Error fetching settings:', error);
+        console.error('Error details:', (error as Error).message, (error as Error).stack);
+        // Use default values if fetch fails
+      }
+    };
+
+    fetchSettings();
   }, []);
 
   // Auto-rotate products every 2 minutes (120000ms)
@@ -171,11 +257,18 @@ export default function HomePage() {
             className="text-center"
           >
             <h1 className="text-4xl md:text-6xl font-orbitron font-bold mb-6">
-              Secure Your Internet with{' '}
-              <span className="text-neon-cyan">Kage VPN Store</span>
+              {heroTitle.includes('Kage VPN Store') ? (
+                <>
+                  {heroTitle.split('Kage VPN Store')[0]}
+                  <span className="text-neon-cyan">Kage VPN Store</span>
+                  {heroTitle.split('Kage VPN Store')[1]}
+                </>
+              ) : (
+                heroTitle
+              )}
             </h1>
             <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto">
-              Buy ExpressVPN, NordVPN, and more — fast, safe, and local.
+              {heroSubtitle}
             </p>
             <motion.div
               whileHover={{ scale: 1.05 }}
@@ -194,16 +287,79 @@ export default function HomePage() {
       </section>
 
       {/* Promo Banner */}
-      <section className="py-4 bg-gradient-to-r from-neon-cyan/20 to-neon-blue/20">
-        <motion.div
-          animate={{ x: [-1000, 1000] }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-          className="whitespace-nowrap"
-        >
-          <span className="text-lg font-semibold text-neon-cyan">
-            🔥 Buy 1 Year Plan – Get 1 Month Free 🔥 Limited Time Offer! 🔥 Buy 1 Year Plan – Get 1 Month Free 🔥
-          </span>
-        </motion.div>
+      {promoBannerEnabled && settingsLoaded && (
+        <section className="py-4 bg-gradient-to-r from-neon-cyan/20 to-neon-blue/20">
+          <motion.div
+            key={`${promoBannerText}-${settingsLoaded}-${Date.now()}`}
+            animate={{ x: [-1000, 1000] }}
+            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            className="whitespace-nowrap"
+          >
+            <span className="text-lg font-semibold text-neon-cyan">
+              {promoBannerText}
+            </span>
+          </motion.div>
+        </section>
+      )}
+
+      {/* Features Section */}
+      <section className="py-20 bg-primary-dark/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-3xl md:text-4xl font-orbitron font-bold mb-4">
+              {featuresTitle}
+            </h2>
+            <p className="text-gray-300 text-lg mb-4">
+              {featuresSubtitle}
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="text-center p-6 rounded-lg bg-primary-light/20 border border-neon-cyan/20"
+            >
+              <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-neon-cyan to-neon-blue rounded-full flex items-center justify-center">
+                <Shield className="h-8 w-8 text-primary-dark" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Secure & Private</h3>
+              <p className="text-gray-300">Premium VPN services with military-grade encryption to protect your online privacy.</p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="text-center p-6 rounded-lg bg-primary-light/20 border border-neon-cyan/20"
+            >
+              <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-neon-cyan to-neon-blue rounded-full flex items-center justify-center">
+                <Zap className="h-8 w-8 text-primary-dark" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Lightning Fast</h3>
+              <p className="text-gray-300">Instant delivery and activation of your VPN accounts with 24/7 customer support.</p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="text-center p-6 rounded-lg bg-primary-light/20 border border-neon-cyan/20"
+            >
+              <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-neon-cyan to-neon-blue rounded-full flex items-center justify-center">
+                <Star className="h-8 w-8 text-primary-dark" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Best Prices</h3>
+              <p className="text-gray-300">Competitive pricing on all premium VPN services with local payment options.</p>
+            </motion.div>
+          </div>
+        </div>
       </section>
 
       {/* VPN Products */}
@@ -216,10 +372,10 @@ export default function HomePage() {
             className="text-center mb-16"
           >
             <h2 className="text-3xl md:text-4xl font-orbitron font-bold mb-4">
-              Premium VPN Plans
+              {productsTitle}
             </h2>
             <p className="text-gray-300 text-lg mb-4">
-              Choose from our selection of premium VPN services
+              {productsSubtitle}
             </p>
             {allProducts.length > 3 && (
               <div className="flex justify-center items-center space-x-4 text-sm text-gray-400">
@@ -353,8 +509,13 @@ export default function HomePage() {
             className="text-center mb-16"
           >
             <h2 className="text-3xl md:text-4xl font-orbitron font-bold mb-4">
-              What Our Customers Say
+              {testimonialsTitle}
             </h2>
+            {testimonialsSubtitle && (
+              <p className="text-gray-300 text-lg mb-4">
+                {testimonialsSubtitle}
+              </p>
+            )}
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -378,52 +539,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="bg-primary-dark border-t border-primary-secondary py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-              <h3 className="text-xl font-orbitron font-bold text-neon-cyan mb-4">
-                Kage VPN Store
-              </h3>
-              <p className="text-gray-300">
-                Your trusted source for premium VPN services in Myanmar.
-              </p>
-            </div>
-            
-            <div>
-              <h4 className="font-semibold mb-4">Quick Links</h4>
-              <ul className="space-y-2 text-gray-300">
-                <li><Link href="/products" className="hover:text-neon-cyan transition-colors">Products</Link></li>
-                <li><Link href="/orders" className="hover:text-neon-cyan transition-colors">Orders</Link></li>
-                <li><Link href="/contact" className="hover:text-neon-cyan transition-colors">Contact</Link></li>
-              </ul>
-            </div>
-            
-            <div>
-              <h4 className="font-semibold mb-4">Legal</h4>
-              <ul className="space-y-2 text-gray-300">
-                <li><Link href="/privacy" className="hover:text-neon-cyan transition-colors">Privacy Policy</Link></li>
-                <li><Link href="/terms" className="hover:text-neon-cyan transition-colors">Terms of Service</Link></li>
-              </ul>
-            </div>
-            
-            <div>
-              <h4 className="font-semibold mb-4">Contact Us</h4>
-              <div className="space-y-2 text-gray-300">
-                <p>📱 Telegram: @kagevpn</p>
-                <p>📧 Email: info@kagevpn.com</p>
-                <p>📘 Facebook: Kage VPN Store</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="border-t border-primary-secondary mt-8 pt-8 text-center text-gray-300">
-            <p>&copy; 2024 Kage VPN Store. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
 
       {/* Floating Chat Button */}
       <motion.div

@@ -57,7 +57,12 @@ export async function GET(request: NextRequest) {
       await settings.save();
     }
 
-    return NextResponse.json({ settings });
+    return NextResponse.json({ 
+      settings: {
+        ...settings.toObject(),
+        maintenanceMode: settings.maintenanceMode || false
+      }
+    });
   } catch (error) {
     console.error('Error fetching settings:', error);
     return NextResponse.json(
@@ -75,7 +80,31 @@ export async function PUT(request: NextRequest) {
     const admin = requireAdmin(request);
     
     const body = await request.json();
-    const { paymentMethods, siteName, siteDescription, contactEmail, contactPhone } = body;
+    const { 
+      paymentMethods, 
+      siteName, 
+      siteDescription, 
+      contactEmail, 
+      contactPhone, 
+      promoBannerText, 
+      promoBannerEnabled,
+      maintenanceMode,
+      heroTitle,
+      heroSubtitle,
+      featuresTitle,
+      featuresSubtitle,
+      productsTitle,
+      productsSubtitle,
+      testimonialsTitle,
+      testimonialsSubtitle,
+      aboutUsText,
+      termsOfServiceText,
+      privacyPolicyText,
+      refundPolicyText,
+      faqContent,
+      footerText,
+      socialLinks
+    } = body;
 
     let settings = await Settings.findOne();
     
@@ -89,8 +118,32 @@ export async function PUT(request: NextRequest) {
     if (siteDescription) settings.siteDescription = siteDescription;
     if (contactEmail) settings.contactEmail = contactEmail;
     if (contactPhone) settings.contactPhone = contactPhone;
+    if (promoBannerText !== undefined) settings.promoBannerText = promoBannerText;
+    if (promoBannerEnabled !== undefined) settings.promoBannerEnabled = promoBannerEnabled;
+    if (maintenanceMode !== undefined) {
+      console.log('Updating maintenanceMode to:', maintenanceMode);
+      settings.maintenanceMode = maintenanceMode;
+    }
+    
+    // Content Management Updates
+    if (heroTitle !== undefined) settings.heroTitle = heroTitle;
+    if (heroSubtitle !== undefined) settings.heroSubtitle = heroSubtitle;
+    if (featuresTitle !== undefined) settings.featuresTitle = featuresTitle;
+    if (featuresSubtitle !== undefined) settings.featuresSubtitle = featuresSubtitle;
+    if (productsTitle !== undefined) settings.productsTitle = productsTitle;
+    if (productsSubtitle !== undefined) settings.productsSubtitle = productsSubtitle;
+    if (testimonialsTitle !== undefined) settings.testimonialsTitle = testimonialsTitle;
+    if (testimonialsSubtitle !== undefined) settings.testimonialsSubtitle = testimonialsSubtitle;
+    if (aboutUsText !== undefined) settings.aboutUsText = aboutUsText;
+    if (termsOfServiceText !== undefined) settings.termsOfServiceText = termsOfServiceText;
+    if (privacyPolicyText !== undefined) settings.privacyPolicyText = privacyPolicyText;
+    if (refundPolicyText !== undefined) settings.refundPolicyText = refundPolicyText;
+    if (faqContent !== undefined) settings.faqContent = faqContent;
+    if (footerText !== undefined) settings.footerText = footerText;
+    if (socialLinks !== undefined) settings.socialLinks = socialLinks;
 
     await settings.save();
+    console.log('Settings saved successfully, maintenanceMode:', settings.maintenanceMode);
 
     return NextResponse.json({ 
       message: 'Settings updated successfully',

@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { Shield, Users, Award, Clock, Globe, Heart, Target, Zap } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
 const teamMembers = [
   {
@@ -55,6 +56,32 @@ const stats = [
 ];
 
 export default function AboutPage() {
+  const [aboutUsText, setAboutUsText] = useState('Myanmar\'s trusted VPN marketplace, providing secure internet access to thousands of users since 2021');
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const response = await fetch('/api/settings', {
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache'
+          }
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (data.settings && data.settings.aboutUsText) {
+            setAboutUsText(data.settings.aboutUsText);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching settings:', error);
+      }
+    };
+
+    fetchSettings();
+  }, []);
+
   return (
     <div className="min-h-screen bg-primary-dark text-white">
       {/* Hero Section */}
@@ -70,8 +97,7 @@ export default function AboutPage() {
               About <span className="text-neon-cyan">Kage VPN Store</span>
             </h1>
             <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-8">
-              Myanmar's trusted VPN marketplace, providing secure internet access 
-              to thousands of users since 2021
+              {aboutUsText}
             </p>
           </motion.div>
         </div>

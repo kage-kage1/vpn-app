@@ -2778,6 +2778,34 @@ export default function AdminDashboard() {
     confirmPassword: ''
   });
   
+  // Promo banner settings state
+  const [promoBannerText, setPromoBannerText] = useState('🔥 Buy 1 Year Plan – Get 1 Month Free 🔥 Limited Time Offer! 🔥 Buy 1 Year Plan – Get 1 Month Free 🔥');
+  const [promoBannerEnabled, setPromoBannerEnabled] = useState(true);
+  const [promoBannerSaving, setPromoBannerSaving] = useState(false);
+  
+  // Content management states
+  const [heroTitle, setHeroTitle] = useState('Secure Your Internet with Kage VPN Store');
+  const [heroSubtitle, setHeroSubtitle] = useState('Buy ExpressVPN, NordVPN, and more — fast, safe, and local.');
+  const [featuresTitle, setFeaturesTitle] = useState('Why Choose Kage VPN Store?');
+  const [featuresSubtitle, setFeaturesSubtitle] = useState('We provide the best VPN services with unmatched quality and support.');
+  const [productsTitle, setProductsTitle] = useState('Premium VPN Plans');
+  const [productsSubtitle, setProductsSubtitle] = useState('Choose from our selection of premium VPN services');
+  const [testimonialsTitle, setTestimonialsTitle] = useState('What Our Customers Say');
+  const [testimonialsSubtitle, setTestimonialsSubtitle] = useState('Hear from our satisfied customers about their experience.');
+  const [aboutUsText, setAboutUsText] = useState('We are Myanmar\'s trusted VPN key provider, offering premium VPN services at affordable prices with instant delivery and 24/7 support.');
+  const [termsOfServiceText, setTermsOfServiceText] = useState('By using our services, you agree to our terms and conditions. Please read carefully before making a purchase.');
+  const [privacyPolicyText, setPrivacyPolicyText] = useState('We respect your privacy and are committed to protecting your personal information. This policy explains how we collect and use your data.');
+  const [refundPolicyText, setRefundPolicyText] = useState('We offer refunds within 7 days of purchase if the VPN key is not working. Please contact our support team for assistance.');
+  const [faqContent, setFaqContent] = useState('Frequently asked questions and answers about our VPN services, delivery process, and support.');
+  const [footerText, setFooterText] = useState('© 2024 Kage VPN Store. All rights reserved. Premium VPN keys at your fingertips.');
+  const [socialLinks, setSocialLinks] = useState({
+    facebook: '',
+    telegram: '',
+    viber: '',
+    whatsapp: ''
+  });
+  const [contentSaving, setContentSaving] = useState(false);
+  
   const [dashboardData, setDashboardData] = useState<{
     stats: DashboardStat[];
     orders: DashboardOrder[];
@@ -2902,7 +2930,7 @@ export default function AdminDashboard() {
           },
           { 
             title: 'Revenue', 
-            value: `${(data.stats.totalRevenue / 1000000).toFixed(1)}M Ks`, 
+            value: `${data.stats.totalRevenue.toLocaleString()} MMK`, 
             change: '+8%', 
             icon: DollarSign, 
             color: 'text-green-400' 
@@ -2943,7 +2971,7 @@ export default function AdminDashboard() {
           customer: order.userId?.name || 'Unknown',
           email: order.userId?.email || 'N/A',
           product: order.items?.[0]?.name || 'Multiple Items',
-          amount: order.total?.toLocaleString() || '0',
+          amount: `${order.total?.toLocaleString() || '0'} MMK`,
           status: order.status === 'payment_submitted' ? 'Pending' : 
                   order.status === 'completed' ? 'Completed' : 
                   order.status === 'verified' ? 'Verified' : 'Pending',
@@ -2991,6 +3019,9 @@ export default function AdminDashboard() {
   // Settings handler functions
   const handleMaintenanceToggle = async () => {
     try {
+      const newMaintenanceMode = !maintenanceMode;
+      console.log('Toggling maintenance mode to:', newMaintenanceMode);
+      
       const response = await fetch('/api/admin/settings', {
         method: 'PUT',
         headers: {
@@ -2998,20 +3029,25 @@ export default function AdminDashboard() {
           'Authorization': `Bearer ${localStorage.getItem('admin-token')}`
         },
         body: JSON.stringify({
-          maintenanceMode: !maintenanceMode
+          maintenanceMode: newMaintenanceMode
         })
       });
 
       if (response.ok) {
-        setMaintenanceMode(!maintenanceMode);
+        const data = await response.json();
+        console.log('Maintenance mode update response:', data);
+        setMaintenanceMode(newMaintenanceMode);
         showNotification(
-          `Maintenance mode ${!maintenanceMode ? 'enabled' : 'disabled'} successfully`,
+          `Maintenance mode ${newMaintenanceMode ? 'enabled' : 'disabled'} successfully`,
           'success'
         );
       } else {
+        const errorData = await response.json();
+        console.error('Failed to update maintenance mode:', errorData);
         throw new Error('Failed to update maintenance mode');
       }
     } catch (error) {
+      console.error('Error toggling maintenance mode:', error);
       showNotification('Failed to update maintenance mode', 'error');
     }
   };
@@ -3204,6 +3240,174 @@ export default function AdminDashboard() {
       showNotification(`Failed to clear database: ${error instanceof Error ? error.message : 'Unknown error'}`, 'error');
     }
   };
+
+  // Promo banner handler functions
+  const handlePromoBannerToggle = async () => {
+    try {
+      const response = await fetch('/api/admin/settings', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('admin-token')}`
+        },
+        body: JSON.stringify({
+          promoBannerEnabled: !promoBannerEnabled
+        })
+      });
+
+      if (response.ok) {
+        setPromoBannerEnabled(!promoBannerEnabled);
+        showNotification(
+          `Promo banner ${!promoBannerEnabled ? 'enabled' : 'disabled'} successfully`,
+          'success'
+        );
+      } else {
+        throw new Error('Failed to update promo banner setting');
+      }
+    } catch (error) {
+      showNotification('Failed to update promo banner setting', 'error');
+    }
+  };
+
+  const handleSavePromoBanner = async () => {
+    if (!promoBannerText.trim()) {
+      showNotification('Please enter banner text', 'error');
+      return;
+    }
+
+    setPromoBannerSaving(true);
+    try {
+      const response = await fetch('/api/admin/settings', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('admin-token')}`
+        },
+        body: JSON.stringify({
+          promoBannerText: promoBannerText.trim(),
+          promoBannerEnabled: promoBannerEnabled
+        })
+      });
+
+      if (response.ok) {
+        showNotification('Promo banner updated successfully', 'success');
+      } else {
+        throw new Error('Failed to update promo banner');
+      }
+    } catch (error) {
+      showNotification('Failed to update promo banner', 'error');
+    } finally {
+      setPromoBannerSaving(false);
+    }
+  };
+
+  const handleSaveContent = async () => {
+    setContentSaving(true);
+    try {
+      console.log('Saving content with data:', {
+        heroTitle,
+        heroSubtitle,
+        featuresTitle,
+        featuresSubtitle,
+        productsTitle,
+        productsSubtitle,
+        testimonialsTitle,
+        testimonialsSubtitle
+      });
+      
+      const response = await fetch('/api/admin/settings', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('admin-token')}`
+        },
+        body: JSON.stringify({
+          heroTitle,
+          heroSubtitle,
+          featuresTitle,
+          featuresSubtitle,
+          productsTitle,
+          productsSubtitle,
+          testimonialsTitle,
+          testimonialsSubtitle,
+          aboutUsText,
+          termsOfServiceText,
+          privacyPolicyText,
+          refundPolicyText,
+          faqContent,
+          footerText,
+          socialLinks
+        })
+      });
+
+      if (response.ok) {
+        showNotification('Site content updated successfully', 'success');
+      } else {
+        throw new Error('Failed to update site content');
+      }
+    } catch (error) {
+      showNotification('Failed to update site content', 'error');
+    } finally {
+      setContentSaving(false);
+    }
+  };
+
+  // Load settings on component mount
+  useEffect(() => {
+    const loadSettings = async () => {
+      try {
+        const response = await fetch('/api/admin/settings', {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('admin-token')}`
+          }
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          const settings = data.settings;
+          
+          // Load promo banner settings
+          if (settings.promoBannerText) {
+            setPromoBannerText(settings.promoBannerText);
+          }
+          if (settings.promoBannerEnabled !== undefined) {
+            setPromoBannerEnabled(settings.promoBannerEnabled);
+          }
+          
+          // Load maintenance mode setting
+          console.log('Maintenance mode from settings:', settings.maintenanceMode);
+          setMaintenanceMode(settings.maintenanceMode === true);
+          
+          // Load content management settings
+          console.log('Loading admin settings:', settings);
+          console.log('Features Title from settings:', settings.featuresTitle);
+          console.log('Products Title from settings:', settings.productsTitle);
+          console.log('Testimonials Title from settings:', settings.testimonialsTitle);
+          if (settings.heroTitle) setHeroTitle(settings.heroTitle);
+          if (settings.heroSubtitle) setHeroSubtitle(settings.heroSubtitle);
+          if (settings.featuresTitle) setFeaturesTitle(settings.featuresTitle);
+          if (settings.featuresSubtitle) setFeaturesSubtitle(settings.featuresSubtitle);
+          if (settings.productsTitle) setProductsTitle(settings.productsTitle);
+          if (settings.productsSubtitle) setProductsSubtitle(settings.productsSubtitle);
+          if (settings.testimonialsTitle) setTestimonialsTitle(settings.testimonialsTitle);
+          if (settings.testimonialsSubtitle) setTestimonialsSubtitle(settings.testimonialsSubtitle);
+          if (settings.aboutUsText) setAboutUsText(settings.aboutUsText);
+          if (settings.termsOfServiceText) setTermsOfServiceText(settings.termsOfServiceText);
+          if (settings.privacyPolicyText) setPrivacyPolicyText(settings.privacyPolicyText);
+          if (settings.refundPolicyText) setRefundPolicyText(settings.refundPolicyText);
+          if (settings.faqContent) setFaqContent(settings.faqContent);
+          if (settings.footerText) setFooterText(settings.footerText);
+          if (settings.socialLinks) setSocialLinks(settings.socialLinks);
+        }
+      } catch (error) {
+        console.error('Error loading settings:', error);
+      }
+    };
+
+    if (isClient && adminUser && isAdmin) {
+      loadSettings();
+    }
+  }, [isClient, adminUser, isAdmin]);
 
   // Show loading screen while checking authentication
   if (!isClient || authLoading) {
@@ -3714,6 +3918,360 @@ export default function AdminDashboard() {
                   <PaymentMethodsSettings showNotification={showNotification} />
                 </motion.div>
 
+                {/* Site Content Settings */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.15 }}
+                  className="bg-primary-secondary rounded-xl p-6 border border-gray-700"
+                >
+                  <h2 className="text-xl font-semibold mb-4 text-neon-cyan">Site Content Settings</h2>
+                  <div className="space-y-6">
+                    {/* Promo Banner Section */}
+                    <div className="p-4 bg-gray-800/50 rounded-lg">
+                      <h3 className="font-medium mb-2">Promo Banner</h3>
+                      <p className="text-sm text-gray-400 mb-4">Manage the promotional banner on the home page</p>
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium">Enable Banner</span>
+                          <button 
+                            onClick={() => handlePromoBannerToggle()}
+                            className={`px-4 py-2 rounded-lg transition-colors ${
+                              promoBannerEnabled 
+                                ? 'bg-neon-cyan text-primary-dark' 
+                                : 'bg-gray-600 hover:bg-neon-cyan hover:text-primary-dark'
+                            }`}
+                          >
+                            {promoBannerEnabled ? 'Enabled' : 'Disabled'}
+                          </button>
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-300 mb-2">
+                            Banner Text
+                          </label>
+                          <textarea
+                            value={promoBannerText}
+                            onChange={(e) => setPromoBannerText(e.target.value)}
+                            className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-neon-cyan resize-none"
+                            rows={2}
+                            placeholder="Enter promotional banner text..."
+                          />
+                        </div>
+                        <button 
+                          onClick={() => handleSavePromoBanner()}
+                          disabled={promoBannerSaving}
+                          className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg transition-colors flex items-center"
+                        >
+                          {promoBannerSaving ? (
+                            <>
+                              <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                              Saving...
+                            </>
+                          ) : (
+                            'Save Banner'
+                          )}
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Hero Section */}
+                    <div className="p-4 bg-gray-800/50 rounded-lg">
+                      <h3 className="font-medium mb-2">Hero Section</h3>
+                      <p className="text-sm text-gray-400 mb-4">Main title and subtitle on the home page</p>
+                      <div className="space-y-3">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-300 mb-2">
+                            Hero Title
+                          </label>
+                          <input
+                            type="text"
+                            value={heroTitle}
+                            onChange={(e) => setHeroTitle(e.target.value)}
+                            className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-neon-cyan"
+                            placeholder="Enter hero title..."
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-300 mb-2">
+                            Hero Subtitle
+                          </label>
+                          <textarea
+                            value={heroSubtitle}
+                            onChange={(e) => setHeroSubtitle(e.target.value)}
+                            className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-neon-cyan resize-none"
+                            rows={2}
+                            placeholder="Enter hero subtitle..."
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Features Section */}
+                    <div className="p-4 bg-gray-800/50 rounded-lg">
+                      <h3 className="font-medium mb-2">Features Section</h3>
+                      <p className="text-sm text-gray-400 mb-4">Home page features section content</p>
+                      <div className="space-y-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-300 mb-2">
+                            Features Title
+                          </label>
+                          <input
+                            type="text"
+                            value={featuresTitle}
+                            onChange={(e) => setFeaturesTitle(e.target.value)}
+                            className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-neon-cyan"
+                            placeholder="Enter features title..."
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-300 mb-2">
+                            Features Subtitle
+                          </label>
+                          <textarea
+                            value={featuresSubtitle}
+                            onChange={(e) => setFeaturesSubtitle(e.target.value)}
+                            className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-neon-cyan resize-none"
+                            rows={2}
+                            placeholder="Enter features subtitle..."
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Products Section */}
+                    <div className="p-4 bg-gray-800/50 rounded-lg">
+                      <h3 className="font-medium mb-2">Products Section</h3>
+                      <p className="text-sm text-gray-400 mb-4">Home page products section content</p>
+                      <div className="space-y-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-300 mb-2">
+                            Products Title
+                          </label>
+                          <input
+                            type="text"
+                            value={productsTitle}
+                            onChange={(e) => setProductsTitle(e.target.value)}
+                            className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-neon-cyan"
+                            placeholder="Enter products title..."
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-300 mb-2">
+                            Products Subtitle
+                          </label>
+                          <textarea
+                            value={productsSubtitle}
+                            onChange={(e) => setProductsSubtitle(e.target.value)}
+                            className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-neon-cyan resize-none"
+                            rows={2}
+                            placeholder="Enter products subtitle..."
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Testimonials Section */}
+                    <div className="p-4 bg-gray-800/50 rounded-lg">
+                      <h3 className="font-medium mb-2">Testimonials Section</h3>
+                      <p className="text-sm text-gray-400 mb-4">Home page testimonials section content</p>
+                      <div className="space-y-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-300 mb-2">
+                            Testimonials Title
+                          </label>
+                          <input
+                            type="text"
+                            value={testimonialsTitle}
+                            onChange={(e) => setTestimonialsTitle(e.target.value)}
+                            className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-neon-cyan"
+                            placeholder="Enter testimonials title..."
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-300 mb-2">
+                            Testimonials Subtitle
+                          </label>
+                          <textarea
+                            value={testimonialsSubtitle}
+                            onChange={(e) => setTestimonialsSubtitle(e.target.value)}
+                            className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-neon-cyan resize-none"
+                            rows={2}
+                            placeholder="Enter testimonials subtitle..."
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* About Us Section */}
+                    <div className="p-4 bg-gray-800/50 rounded-lg">
+                      <h3 className="font-medium mb-2">About Us</h3>
+                      <p className="text-sm text-gray-400 mb-4">About us page content</p>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">
+                          About Us Text
+                        </label>
+                        <textarea
+                          value={aboutUsText}
+                          onChange={(e) => setAboutUsText(e.target.value)}
+                          className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-neon-cyan resize-none"
+                          rows={4}
+                          placeholder="Enter about us content..."
+                        />
+                      </div>
+                    </div>
+
+                    {/* Legal Pages */}
+                    <div className="p-4 bg-gray-800/50 rounded-lg">
+                      <h3 className="font-medium mb-2">Legal Pages</h3>
+                      <p className="text-sm text-gray-400 mb-4">Terms, Privacy, and Refund policy content</p>
+                      <div className="space-y-3">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-300 mb-2">
+                            Terms of Service
+                          </label>
+                          <textarea
+                            value={termsOfServiceText}
+                            onChange={(e) => setTermsOfServiceText(e.target.value)}
+                            className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-neon-cyan resize-none"
+                            rows={3}
+                            placeholder="Enter terms of service..."
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-300 mb-2">
+                            Privacy Policy
+                          </label>
+                          <textarea
+                            value={privacyPolicyText}
+                            onChange={(e) => setPrivacyPolicyText(e.target.value)}
+                            className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-neon-cyan resize-none"
+                            rows={3}
+                            placeholder="Enter privacy policy..."
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-300 mb-2">
+                            Refund Policy
+                          </label>
+                          <textarea
+                            value={refundPolicyText}
+                            onChange={(e) => setRefundPolicyText(e.target.value)}
+                            className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-neon-cyan resize-none"
+                            rows={3}
+                            placeholder="Enter refund policy..."
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* FAQ Section */}
+                    <div className="p-4 bg-gray-800/50 rounded-lg">
+                      <h3 className="font-medium mb-2">FAQ Content</h3>
+                      <p className="text-sm text-gray-400 mb-4">Frequently asked questions content</p>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">
+                          FAQ Content
+                        </label>
+                        <textarea
+                          value={faqContent}
+                          onChange={(e) => setFaqContent(e.target.value)}
+                          className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-neon-cyan resize-none"
+                          rows={4}
+                          placeholder="Enter FAQ content..."
+                        />
+                      </div>
+                    </div>
+
+                    {/* Footer Section */}
+                    <div className="p-4 bg-gray-800/50 rounded-lg">
+                      <h3 className="font-medium mb-2">Footer Content</h3>
+                      <p className="text-sm text-gray-400 mb-4">Footer text and social media links</p>
+                      <div className="space-y-3">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-300 mb-2">
+                            Footer Text
+                          </label>
+                          <textarea
+                            value={footerText}
+                            onChange={(e) => setFooterText(e.target.value)}
+                            className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-neon-cyan resize-none"
+                            rows={2}
+                            placeholder="Enter footer text..."
+                          />
+                        </div>
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-300 mb-2">
+                              Facebook URL
+                            </label>
+                            <input
+                              type="url"
+                              value={socialLinks.facebook}
+                              onChange={(e) => setSocialLinks({...socialLinks, facebook: e.target.value})}
+                              className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-neon-cyan"
+                              placeholder="https://facebook.com/..."
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-300 mb-2">
+                              Telegram URL
+                            </label>
+                            <input
+                              type="url"
+                              value={socialLinks.telegram}
+                              onChange={(e) => setSocialLinks({...socialLinks, telegram: e.target.value})}
+                              className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-neon-cyan"
+                              placeholder="https://t.me/..."
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-300 mb-2">
+                              Viber URL
+                            </label>
+                            <input
+                              type="url"
+                              value={socialLinks.viber}
+                              onChange={(e) => setSocialLinks({...socialLinks, viber: e.target.value})}
+                              className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-neon-cyan"
+                              placeholder="viber://..."
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-300 mb-2">
+                              WhatsApp URL
+                            </label>
+                            <input
+                              type="url"
+                              value={socialLinks.whatsapp}
+                              onChange={(e) => setSocialLinks({...socialLinks, whatsapp: e.target.value})}
+                              className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-neon-cyan"
+                              placeholder="https://wa.me/..."
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Save All Content Button */}
+                    <div className="flex justify-end">
+                      <button 
+                        onClick={() => handleSaveContent()}
+                        disabled={contentSaving}
+                        className="bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white px-6 py-2 rounded-lg transition-colors flex items-center"
+                      >
+                        {contentSaving ? (
+                          <>
+                            <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                            Saving...
+                          </>
+                        ) : (
+                          'Save All Content'
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+
                 {/* Security Settings */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
@@ -3821,7 +4379,7 @@ export default function AdminDashboard() {
                         </div>
                         <div>
                           <span className="text-gray-400">Environment:</span>
-                          <p className="font-medium">Development</p>
+                          <p className="font-medium">{process.env.NODE_ENV === 'production' ? 'Production' : 'Development'}</p>
                         </div>
                         <div>
                           <span className="text-gray-400">Last Updated:</span>
