@@ -5,7 +5,7 @@ import { requireAdmin } from '@/lib/auth';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await dbConnect();
@@ -13,7 +13,8 @@ export async function GET(
     // Require admin authentication
     const admin = requireAdmin(request);
     
-    const user = await User.findById(params.id).select('-password');
+    const { id } = await params;
+    const user = await User.findById(id).select('-password');
     
     if (!user) {
       return NextResponse.json(
@@ -34,7 +35,7 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await dbConnect();
@@ -43,9 +44,10 @@ export async function PUT(
     const admin = requireAdmin(request);
     
     const updateData = await request.json();
+    const { id } = await params;
     
     const user = await User.findByIdAndUpdate(
-      params.id,
+      id,
       updateData,
       { new: true }
     ).select('-password');
@@ -69,7 +71,7 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await dbConnect();
@@ -77,8 +79,10 @@ export async function DELETE(
     // Require admin authentication
     const admin = requireAdmin(request);
     
+    const { id } = await params;
+    
     // Check if user exists and is not an admin
-    const user = await User.findById(params.id);
+    const user = await User.findById(id);
     if (!user) {
       return NextResponse.json(
         { error: 'User not found' },
@@ -93,7 +97,7 @@ export async function DELETE(
       );
     }
     
-    await User.findByIdAndDelete(params.id);
+    await User.findByIdAndDelete(id);
 
     return NextResponse.json({ 
       message: 'User deleted successfully',
