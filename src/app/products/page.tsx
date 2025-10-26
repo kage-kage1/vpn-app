@@ -260,7 +260,7 @@ export default function ProductsPage() {
     <ErrorBoundary>
       <div className="min-h-screen bg-primary-dark pt-20">
       {/* Hero Section */}
-      <section className="py-16 bg-gradient-to-br from-primary-dark via-primary-secondary to-primary-dark">
+      <section className="py-12 sm:py-16 bg-gradient-to-br from-primary-dark via-primary-secondary to-primary-dark">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -268,10 +268,10 @@ export default function ProductsPage() {
             transition={{ duration: 0.8 }}
             className="text-center max-w-4xl mx-auto"
           >
-            <h1 className="text-4xl md:text-6xl font-orbitron font-bold text-white mb-6">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-orbitron font-bold text-white mb-4 sm:mb-6">
               Premium <span className="text-neon-cyan">VPN Accounts</span>
             </h1>
-            <p className="text-xl text-gray-300 mb-8">
+            <p className="text-base sm:text-lg md:text-xl text-gray-300 mb-6 sm:mb-8 px-4">
               Secure, fast, and reliable VPN accounts from top providers. 
               Get instant access to premium features at unbeatable prices.
             </p>
@@ -280,7 +280,7 @@ export default function ProductsPage() {
       </section>
 
       {/* Search and Filter Section */}
-      <section className="py-8 bg-primary-secondary/30">
+      <section className="py-6 sm:py-8 bg-primary-secondary/30">
         <div className="container mx-auto px-4">
           <AdvancedSearch
             searchValue={filters.searchTerm}
@@ -328,7 +328,7 @@ export default function ProductsPage() {
       </section>
 
       {/* Products Grid */}
-      <section className="py-16">
+      <section className="py-12 sm:py-16">
         <div className="container mx-auto px-4">
           {loading ? (
             <div className="text-center py-16">
@@ -336,7 +336,7 @@ export default function ProductsPage() {
               <p className="text-gray-400 mt-4">Loading products...</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
               {filteredProducts.map((product, index) => (
                 <motion.div
                   key={product._id}

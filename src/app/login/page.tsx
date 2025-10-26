@@ -132,20 +132,20 @@ function LoginForm() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-dark via-primary-secondary to-primary-dark flex items-center justify-center px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-primary-dark via-primary-secondary to-primary-dark flex items-center justify-center px-4 sm:px-6 lg:px-8 py-8">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="max-w-md w-full space-y-8"
+        className="max-w-md w-full space-y-6 sm:space-y-8"
       >
         <div className="text-center">
-          <Link href="/" className="text-3xl font-orbitron font-bold text-neon-cyan">
+          <Link href="/" className="text-2xl sm:text-3xl font-orbitron font-bold text-neon-cyan">
             Kage VPN
           </Link>
-          <h2 className="mt-6 text-2xl font-bold text-white">
+          <h2 className="mt-4 sm:mt-6 text-xl sm:text-2xl font-bold text-white">
             Sign in to your account
           </h2>
-          <p className="mt-2 text-gray-400">
+          <p className="mt-2 text-gray-400 text-sm sm:text-base">
             Or{' '}
             <Link
               href="/register"
@@ -160,7 +160,7 @@ function LoginForm() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="mt-8 space-y-6"
+          className="mt-6 sm:mt-8 space-y-4 sm:space-y-6"
           onSubmit={handleSubmit}
         >
           <div className="space-y-4">
@@ -170,7 +170,7 @@ function LoginForm() {
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-gray-400" />
+                  <Mail className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
                 </div>
                 <input
                   id="email"
@@ -180,7 +180,7 @@ function LoginForm() {
                   required
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="block w-full pl-10 pr-3 py-3 border border-primary-secondary rounded-lg bg-primary-dark text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-neon-cyan focus:border-transparent transition-colors"
+                  className="block w-full pl-9 sm:pl-10 pr-3 py-2 sm:py-3 border border-primary-secondary rounded-lg bg-primary-dark text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-neon-cyan focus:border-transparent transition-colors text-sm sm:text-base"
                   placeholder="Enter your email"
                 />
               </div>
@@ -192,7 +192,7 @@ function LoginForm() {
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-gray-400" />
+                  <Lock className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
                 </div>
                 <input
                   id="password"
@@ -202,7 +202,7 @@ function LoginForm() {
                   required
                   value={formData.password}
                   onChange={handleInputChange}
-                  className="block w-full pl-10 pr-10 py-3 border border-primary-secondary rounded-lg bg-primary-dark text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-neon-cyan focus:border-transparent transition-colors"
+                  className="block w-full pl-9 sm:pl-10 pr-9 sm:pr-10 py-2 sm:py-3 border border-primary-secondary rounded-lg bg-primary-dark text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-neon-cyan focus:border-transparent transition-colors text-sm sm:text-base"
                   placeholder="Enter your password"
                 />
                 <button
@@ -211,16 +211,16 @@ function LoginForm() {
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? (
-                    <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-300" />
+                    <EyeOff className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 hover:text-gray-300" />
                   ) : (
-                    <Eye className="h-5 w-5 text-gray-400 hover:text-gray-300" />
+                    <Eye className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 hover:text-gray-300" />
                   )}
                 </button>
               </div>
             </div>
           </div>
 
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-3 sm:space-y-0">
             <div className="flex items-center">
               <input
                 id="rememberMe"
@@ -249,10 +249,10 @@ function LoginForm() {
             <LoadingButton
               type="submit"
               isLoading={isLoading}
-              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-primary-dark bg-neon-cyan hover:bg-neon-cyan/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neon-cyan transition-colors"
+              className="group relative w-full flex justify-center py-2 sm:py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-primary-dark bg-neon-cyan hover:bg-neon-cyan/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neon-cyan transition-colors"
             >
               <span className="absolute left-0 inset-y-0 flex items-center pl-3">
-                <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 group-hover:translate-x-1 transition-transform" />
               </span>
               Sign in
             </LoadingButton>

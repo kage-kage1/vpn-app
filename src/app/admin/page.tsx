@@ -1628,13 +1628,23 @@ function ProductsManagement({ showNotification }: { showNotification: (message: 
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch('/api/admin/products');
+      const token = localStorage.getItem('admin-token');
+      const response = await fetch('/api/admin/products', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
       if (response.ok) {
         const data = await response.json();
         setProducts(data.products || []);
+      } else {
+        console.error('Error fetching products:', response.status, response.statusText);
+        showNotification('Failed to fetch products. Please check your authentication.', 'error');
       }
     } catch (error) {
       console.error('Error fetching products:', error);
+      showNotification('Network error while fetching products', 'error');
     } finally {
       setLoading(false);
     }
@@ -2223,14 +2233,24 @@ function UsersManagement({ showNotification }: { showNotification: (message: str
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch(`/api/admin/users?page=${currentPage}&limit=10`);
+      const token = localStorage.getItem('admin-token');
+      const response = await fetch(`/api/admin/users?page=${currentPage}&limit=10`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
       if (response.ok) {
         const data = await response.json();
         setUsers(data.users || []);
         setTotalPages(data.totalPages || 1);
+      } else {
+        console.error('Error fetching users:', response.status, response.statusText);
+        showNotification('Failed to fetch users. Please check your authentication.', 'error');
       }
     } catch (error) {
       console.error('Error fetching users:', error);
+      showNotification('Network error while fetching users', 'error');
     } finally {
       setLoading(false);
     }
@@ -2254,10 +2274,12 @@ function UsersManagement({ showNotification }: { showNotification: (message: str
 
   const handleUpdateUser = async () => {
     try {
+      const token = localStorage.getItem('admin-token');
       const response = await fetch('/api/admin/users', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({
           id: selectedUser._id,
@@ -2340,10 +2362,12 @@ function UsersManagement({ showNotification }: { showNotification: (message: str
 
     if (window.confirm(`Are you sure you want to delete user "${user.name}"? This action cannot be undone.`)) {
       try {
+        const token = localStorage.getItem('admin-token');
         const response = await fetch('/api/admin/users', {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
           },
           body: JSON.stringify({
             id: user._id

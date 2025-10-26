@@ -90,7 +90,13 @@ export default function AdminPaymentsPage() {
         search: searchTerm,
       });
 
-      const response = await fetch(`/api/admin/payments?${params}`);
+      const token = localStorage.getItem('admin-token');
+      const response = await fetch(`/api/admin/payments?${params}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
       if (response.ok) {
         const data = await response.json();
         setPayments(data.payments || []);

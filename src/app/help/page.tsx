@@ -93,7 +93,7 @@ export default function HelpPage() {
   return (
     <div className="min-h-screen bg-primary-dark text-white">
       {/* Hero Section */}
-      <section className="py-20 bg-gradient-to-br from-primary-dark via-primary-secondary to-primary-dark">
+      <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-br from-primary-dark via-primary-secondary to-primary-dark">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -101,23 +101,23 @@ export default function HelpPage() {
             transition={{ duration: 0.8 }}
             className="text-center"
           >
-            <HelpCircle className="h-16 w-16 text-neon-cyan mx-auto mb-6" />
-            <h1 className="text-4xl md:text-6xl font-orbitron font-bold mb-6">
+            <HelpCircle className="h-12 w-12 sm:h-14 sm:w-14 lg:h-16 lg:w-16 text-neon-cyan mx-auto mb-4 sm:mb-6" />
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-orbitron font-bold mb-4 sm:mb-6 px-4">
               Help <span className="text-neon-cyan">Center</span>
             </h1>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-8">
+            <p className="text-base sm:text-lg md:text-xl text-gray-300 max-w-3xl mx-auto mb-6 sm:mb-8 px-4">
               Find answers to your questions and get the support you need
             </p>
             
             {/* Search Bar */}
-            <div className="max-w-2xl mx-auto relative">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <div className="max-w-2xl mx-auto relative px-4">
+              <Search className="absolute left-8 top-1/2 transform -translate-y-1/2 h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
               <input
                 type="text"
                 placeholder="Search for help articles..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-4 bg-primary-secondary border border-primary-secondary rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-neon-cyan transition-colors"
+                className="w-full pl-10 sm:pl-12 pr-4 py-3 sm:py-4 bg-primary-secondary border border-primary-secondary rounded-xl text-sm sm:text-base text-white placeholder-gray-400 focus:outline-none focus:border-neon-cyan transition-colors"
               />
             </div>
           </motion.div>
@@ -125,28 +125,28 @@ export default function HelpPage() {
       </section>
 
       {/* Quick Links */}
-      <section className="py-16">
+      <section className="py-12 sm:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="text-center mb-12"
+            className="text-center mb-8 sm:mb-12"
           >
-            <h2 className="text-3xl font-orbitron font-bold mb-4">
+            <h2 className="text-2xl sm:text-3xl font-orbitron font-bold mb-3 sm:mb-4">
               Popular <span className="text-neon-cyan">Topics</span>
             </h2>
-            <p className="text-xl text-gray-300">Quick access to commonly needed help</p>
+            <p className="text-lg sm:text-xl text-gray-300">Quick access to commonly needed help</p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {quickLinks.map((link, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
-                className="bg-primary-secondary/30 rounded-xl p-6 border border-primary-secondary hover:border-neon-cyan/50 transition-colors cursor-pointer group"
+                className="bg-primary-secondary/30 rounded-xl p-4 sm:p-6 border border-primary-secondary hover:border-neon-cyan/50 transition-colors cursor-pointer group"
               >
                 <h3 className="text-lg font-semibold mb-2 group-hover:text-neon-cyan transition-colors">
                   {link.title}

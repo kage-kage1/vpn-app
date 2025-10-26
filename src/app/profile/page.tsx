@@ -324,30 +324,30 @@ export default function ProfilePage() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-dark via-primary-secondary to-primary-dark pt-20">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="min-h-screen bg-gradient-to-br from-primary-dark via-primary-secondary to-primary-dark pt-16 sm:pt-20">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
+          className="mb-6 sm:mb-8"
         >
-          <div className="bg-primary-secondary/50 rounded-xl p-6 border border-gray-700">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-6">
-                <div className="w-20 h-20 bg-gradient-to-br from-neon-cyan to-neon-purple rounded-full flex items-center justify-center">
-                  <User className="w-10 h-10 text-white" />
+          <div className="bg-primary-secondary/50 rounded-xl p-4 sm:p-6 border border-gray-700">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-4 sm:space-y-0">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-6 w-full sm:w-auto">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-neon-cyan to-neon-purple rounded-full flex items-center justify-center">
+                  <User className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
                 </div>
-                <div>
-                  <h1 className="text-3xl font-orbitron font-bold mb-2">
+                <div className="flex-1">
+                  <h1 className="text-2xl sm:text-3xl font-orbitron font-bold mb-2">
                     {profile ? `${profile.firstName || user.name.split(' ')[0]} ${profile.lastName || user.name.split(' ')[1] || ''}` : user.name}
                   </h1>
-                  <p className="text-gray-300 flex items-center">
+                  <p className="text-gray-300 flex items-center text-sm sm:text-base">
                     <Mail className="w-4 h-4 mr-2" />
                     {user.email}
                   </p>
-                  <p className="text-sm text-neon-cyan mt-1">
+                  <p className="text-xs sm:text-sm text-neon-cyan mt-1">
                     Member since {new Date(user.createdAt).toLocaleDateString('en-US', { 
                       year: 'numeric', 
                       month: 'long' 
@@ -355,11 +355,11 @@ export default function ProfilePage() {
                   </p>
                 </div>
               </div>
-              <div className="flex space-x-3">
+              <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 w-full sm:w-auto">
                 {editing && (
                   <button
                     onClick={() => setEditing(false)}
-                    className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors flex items-center"
+                    className="px-3 sm:px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors flex items-center justify-center text-sm sm:text-base"
                   >
                     <X className="w-4 h-4 mr-2" />
                     Cancel
@@ -368,7 +368,7 @@ export default function ProfilePage() {
                 <button
                   onClick={() => editing ? handleSave() : setEditing(true)}
                   disabled={saving}
-                  className="px-6 py-2 bg-gradient-to-r from-neon-cyan to-neon-purple text-white rounded-lg hover:opacity-90 transition-opacity flex items-center disabled:opacity-50"
+                  className="px-4 sm:px-6 py-2 bg-gradient-to-r from-neon-cyan to-neon-purple text-white rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center disabled:opacity-50 text-sm sm:text-base"
                 >
                   {saving ? (
                     <>
@@ -392,7 +392,7 @@ export default function ProfilePage() {
           </div>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
           
           {/* Personal Information */}
           <motion.div

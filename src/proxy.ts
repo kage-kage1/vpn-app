@@ -16,22 +16,27 @@ export async function proxy(request: NextRequest) {
   }
 
   try {
-    // Check maintenance mode from settings API
-    const settingsUrl = new URL('/api/settings', request.url);
-    const settingsResponse = await fetch(settingsUrl.toString());
+    // Force HTTP for internal requests to avoid SSL issues
+    const baseUrl = process.env.NODE_ENV === 'production' 
+      ? `https://${request.nextUrl.host}` 
+      : `http://localhost:${process.env.PORT || 3000}`;
+    
+    const settingsResponse = await fetch(`${baseUrl}/api/settings`, {
+      headers: {
+        'User-Agent': 'NextJS-Middleware/1.0',
+        'Accept': 'application/json',
+      },
+    });
     
     if (settingsResponse.ok) {
-      const data = await settingsResponse.json();
-      
-      // If maintenance mode is enabled, redirect to maintenance page
-      if (data.settings?.maintenanceMode) {
-        const maintenanceUrl = new URL('/maintenance', request.url);
-        return NextResponse.redirect(maintenanceUrl);
+      const settings = await settingsResponse.json();
+      if (settings.maintenanceMode) {
+        return NextResponse.redirect(new URL('/maintenance', request.url));
       }
     }
   } catch (error) {
     console.error('Proxy error checking maintenance mode:', error);
-    // If there's an error checking maintenance mode, allow the request to continue
+    // Continue without maintenance check if there's an error
   }
 
   return NextResponse.next();

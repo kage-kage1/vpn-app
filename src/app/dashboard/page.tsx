@@ -77,22 +77,22 @@ export default function UserDashboard() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-dark via-primary-secondary to-primary-dark pt-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="min-h-screen bg-gradient-to-br from-primary-dark via-primary-secondary to-primary-dark pt-16 sm:pt-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
+          className="mb-6 sm:mb-8"
         >
-          <h1 className="text-3xl font-orbitron font-bold mb-2">
+          <h1 className="text-2xl sm:text-3xl font-orbitron font-bold mb-2 px-2">
             Welcome back, <span className="text-neon-cyan">{user.name}</span>
           </h1>
-          <p className="text-gray-300">သင့် VPN accounts များနှင့် orders များကို စီမံခန့်ခွဲပါ</p>
+          <p className="text-gray-300 px-2 text-sm sm:text-base">သင့် VPN accounts များနှင့် orders များကို စီမံခန့်ခွဲပါ</p>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 sm:gap-8">
           
           {/* Sidebar */}
           <motion.div
@@ -100,53 +100,53 @@ export default function UserDashboard() {
             animate={{ opacity: 1, x: 0 }}
             className="lg:col-span-1"
           >
-            <div className="bg-primary-secondary/50 rounded-xl p-6 border border-gray-700">
+            <div className="bg-primary-secondary/50 rounded-xl p-4 sm:p-6 border border-gray-700">
               <div className="space-y-2">
                 <button
                   onClick={() => setActiveTab('orders')}
-                  className={`w-full flex items-center px-4 py-3 rounded-lg transition-colors ${
+                  className={`w-full flex items-center px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base rounded-lg transition-colors ${
                     activeTab === 'orders' 
                       ? 'bg-neon-cyan/20 text-neon-cyan border border-neon-cyan/30' 
                       : 'text-gray-300 hover:bg-gray-700'
                   }`}
                 >
-                  <ShoppingBag className="h-5 w-5 mr-3" />
+                  <ShoppingBag className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3" />
                   My Orders
                 </button>
                 
                 <button
                   onClick={() => setActiveTab('vpn-keys')}
-                  className={`w-full flex items-center px-4 py-3 rounded-lg transition-colors ${
+                  className={`w-full flex items-center px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base rounded-lg transition-colors ${
                     activeTab === 'vpn-keys' 
                       ? 'bg-neon-cyan/20 text-neon-cyan border border-neon-cyan/30' 
                       : 'text-gray-300 hover:bg-gray-700'
                   }`}
                 >
-                  <Key className="h-5 w-5 mr-3" />
+                  <Key className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3" />
                   VPN Keys
                 </button>
                 
                 <button
                   onClick={() => setActiveTab('profile')}
-                  className={`w-full flex items-center px-4 py-3 rounded-lg transition-colors ${
+                  className={`w-full flex items-center px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base rounded-lg transition-colors ${
                     activeTab === 'profile' 
                       ? 'bg-neon-cyan/20 text-neon-cyan border border-neon-cyan/30' 
                       : 'text-gray-300 hover:bg-gray-700'
                   }`}
                 >
-                  <User className="h-5 w-5 mr-3" />
+                  <User className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3" />
                   Profile
                 </button>
                 
                 <button
                   onClick={() => setActiveTab('settings')}
-                  className={`w-full flex items-center px-4 py-3 rounded-lg transition-colors ${
+                  className={`w-full flex items-center px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base rounded-lg transition-colors ${
                     activeTab === 'settings' 
                       ? 'bg-neon-cyan/20 text-neon-cyan border border-neon-cyan/30' 
                       : 'text-gray-300 hover:bg-gray-700'
                   }`}
                 >
-                  <Settings className="h-5 w-5 mr-3" />
+                  <Settings className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3" />
                   Settings
                 </button>
                 

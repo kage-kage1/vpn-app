@@ -271,35 +271,35 @@ export default function CheckoutPage() {
 
   return (
     <div className="min-h-screen bg-primary-dark text-white">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         {/* Back Button */}
-        <div className="mb-8">
+        <div className="mb-6 sm:mb-8">
           <Link
             href="/products"
             className="flex items-center text-gray-300 hover:text-neon-cyan transition-colors"
           >
-            <ArrowLeft className="h-5 w-5 mr-2" />
+            <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
             Back to Products
           </Link>
         </div>
 
         {/* Progress Bar */}
-        <div className="mb-12">
+        <div className="mb-8 sm:mb-12">
           <div className="flex items-center justify-center">
             {[1, 2, 3].map((step) => (
               <div key={step} className="flex items-center">
                 <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${
+                  className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-semibold text-sm sm:text-base ${
                     step <= currentStep
                       ? 'bg-neon-cyan text-primary-dark'
                       : 'bg-primary-secondary text-gray-400'
                   }`}
                 >
-                  {step < currentStep ? <Check className="h-5 w-5" /> : step}
+                  {step < currentStep ? <Check className="h-4 w-4 sm:h-5 sm:w-5" /> : step}
                 </div>
                 {step < 3 && (
                   <div
-                    className={`w-16 h-1 mx-2 ${
+                    className={`w-8 sm:w-16 h-1 mx-1 sm:mx-2 ${
                       step < currentStep ? 'bg-neon-cyan' : 'bg-primary-secondary'
                     }`}
                   />
@@ -309,7 +309,7 @@ export default function CheckoutPage() {
           </div>
           <div className="flex justify-center mt-4">
             <div className="text-center">
-              <p className="text-sm text-gray-300">
+              <p className="text-xs sm:text-sm text-gray-300">
                 Step {currentStep} of 3: {
                   currentStep === 1 ? 'Fill Information' :
                   currentStep === 2 ? 'Payment Information' :
@@ -320,33 +320,33 @@ export default function CheckoutPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
           {/* Order Summary */}
-          <div className="lg:col-span-1">
-            <div className="bg-primary-secondary rounded-xl p-6 border border-gray-700 sticky top-24">
-              <h3 className="text-xl font-orbitron font-bold mb-4">Order Summary</h3>
+          <div className="lg:col-span-1 order-2 lg:order-1">
+            <div className="bg-primary-secondary rounded-xl p-4 sm:p-6 border border-gray-700 lg:sticky lg:top-24">
+              <h3 className="text-lg sm:text-xl font-orbitron font-bold mb-4">Order Summary</h3>
               
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-300">Product:</span>
-                  <span className="font-semibold">{product.name}</span>
+                  <span className="text-gray-300 text-sm sm:text-base">Product:</span>
+                  <span className="font-semibold text-sm sm:text-base">{product.name}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-300">Duration:</span>
-                  <span className="font-semibold">{product.duration}</span>
+                  <span className="text-gray-300 text-sm sm:text-base">Duration:</span>
+                  <span className="font-semibold text-sm sm:text-base">{product.duration}</span>
                 </div>
-                <div className="border-t border-gray-600 pt-4">
+                <div className="border-t border-gray-600 pt-3 sm:pt-4">
                   <div className="flex justify-between items-center">
-                    <span className="text-lg font-semibold">Total:</span>
-                    <span className="text-2xl font-bold text-neon-cyan">{product.price} Ks</span>
+                    <span className="text-base sm:text-lg font-semibold">Total:</span>
+                    <span className="text-xl sm:text-2xl font-bold text-neon-cyan">{product.price} Ks</span>
                   </div>
                 </div>
               </div>
 
               {/* Payment Instructions */}
-              <div className="mt-6 p-4 bg-primary-dark rounded-lg border border-gray-600">
-                <h4 className="font-semibold mb-2 text-neon-cyan">Payment Instructions:</h4>
-                <ol className="text-sm text-gray-300 space-y-1">
+              <div className="mt-4 sm:mt-6 p-3 sm:p-4 bg-primary-dark rounded-lg border border-gray-600">
+                <h4 className="font-semibold mb-2 text-neon-cyan text-sm sm:text-base">Payment Instructions:</h4>
+                <ol className="text-xs sm:text-sm text-gray-300 space-y-1">
                   <li>1. Choose your payment method</li>
                   <li>2. Transfer the exact amount</li>
                   <li>3. Submit your order</li>
@@ -356,8 +356,8 @@ export default function CheckoutPage() {
           </div>
 
           {/* Checkout Form */}
-          <div className="lg:col-span-2">
-            <div className="bg-primary-secondary rounded-xl p-8 border border-gray-700">
+          <div className="lg:col-span-2 order-1 lg:order-2">
+            <div className="bg-primary-secondary rounded-xl p-4 sm:p-6 lg:p-8 border border-gray-700">
               <form onSubmit={handleSubmit}>
                 {/* Step 1: Personal Information */}
                 {currentStep === 1 && (
@@ -366,9 +366,9 @@ export default function CheckoutPage() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.5 }}
                   >
-                    <h2 className="text-2xl font-orbitron font-bold mb-6">Personal Information</h2>
+                    <h2 className="text-xl sm:text-2xl font-orbitron font-bold mb-4 sm:mb-6">Personal Information</h2>
                     
-                    <div className="space-y-6">
+                    <div className="space-y-4 sm:space-y-6">
                       <div>
                         <label className="block text-sm font-medium mb-2">
                           <User className="inline h-4 w-4 mr-2" />
@@ -380,7 +380,7 @@ export default function CheckoutPage() {
                           value={formData.name}
                           onChange={handleInputChange}
                           required
-                          className="w-full px-4 py-3 bg-primary-dark border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-neon-cyan transition-colors"
+                          className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-primary-dark border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-neon-cyan transition-colors text-sm sm:text-base"
                           placeholder="Enter your full name"
                         />
                       </div>
@@ -396,7 +396,7 @@ export default function CheckoutPage() {
                           value={formData.email}
                           onChange={handleInputChange}
                           required
-                          className="w-full px-4 py-3 bg-primary-dark border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-neon-cyan transition-colors"
+                          className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-primary-dark border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-neon-cyan transition-colors text-sm sm:text-base"
                           placeholder="Enter your email"
                         />
                       </div>
@@ -412,7 +412,7 @@ export default function CheckoutPage() {
                           value={formData.phone}
                           onChange={handleInputChange}
                           required
-                          className="w-full px-4 py-3 bg-primary-dark border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-neon-cyan transition-colors"
+                          className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-primary-dark border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-neon-cyan transition-colors text-sm sm:text-base"
                           placeholder="Enter your phone number"
                         />
                       </div>
@@ -427,9 +427,9 @@ export default function CheckoutPage() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.5 }}
                   >
-                    <h2 className="text-2xl font-orbitron font-bold mb-6">Payment Information</h2>
+                    <h2 className="text-xl sm:text-2xl font-orbitron font-bold mb-4 sm:mb-6">Payment Information</h2>
                     
-                    <div className="space-y-6">
+                    <div className="space-y-4 sm:space-y-6">
                       <div>
                         <label className="block text-sm font-medium mb-2">
                           <CreditCard className="inline h-4 w-4 mr-2" />
@@ -440,7 +440,7 @@ export default function CheckoutPage() {
                           value={formData.bank}
                           onChange={handleInputChange}
                           required
-                          className="w-full px-4 py-3 bg-primary-dark border border-gray-600 rounded-lg text-white focus:outline-none focus:border-neon-cyan transition-colors"
+                          className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-primary-dark border border-gray-600 rounded-lg text-white focus:outline-none focus:border-neon-cyan transition-colors text-sm sm:text-base"
                         >
                           <option value="" className="bg-primary-dark text-white">Choose payment method</option>
                           {loadingMethods ? (
@@ -457,33 +457,33 @@ export default function CheckoutPage() {
 
                       {/* Payment Method Details */}
                       {formData.bank && (
-                        <div className="bg-primary-dark rounded-lg p-4 border border-gray-600">
-                          <h3 className="text-lg font-semibold mb-3 text-neon-cyan">Payment Details</h3>
+                        <div className="bg-primary-dark rounded-lg p-3 sm:p-4 border border-gray-600">
+                          <h3 className="text-base sm:text-lg font-semibold mb-3 text-neon-cyan">Payment Details</h3>
                           {(() => {
                             const selectedMethod = paymentMethods.find(method => method.name === formData.bank);
                             if (selectedMethod) {
                               return (
                                 <div className="space-y-2">
                                   <div>
-                                    <span className="text-gray-400">Account Name: </span>
-                                    <span className="font-semibold text-white">{selectedMethod.accountName}</span>
+                                    <span className="text-gray-400 text-sm sm:text-base">Account Name: </span>
+                                    <span className="font-semibold text-white text-sm sm:text-base">{selectedMethod.accountName}</span>
                                   </div>
                                   <div>
-                                    <span className="text-gray-400">Account Number: </span>
-                                    <span className="font-semibold text-white">{selectedMethod.number}</span>
+                                    <span className="text-gray-400 text-sm sm:text-base">Account Number: </span>
+                                    <span className="font-semibold text-white text-sm sm:text-base">{selectedMethod.number}</span>
                                   </div>
                                   <div>
-                                    <span className="text-gray-400">Phone Number: </span>
-                                    <span className="font-semibold text-white">{selectedMethod.phoneNumber}</span>
+                                    <span className="text-gray-400 text-sm sm:text-base">Phone Number: </span>
+                                    <span className="font-semibold text-white text-sm sm:text-base">{selectedMethod.phoneNumber}</span>
                                   </div>
-                                  <p className="text-sm text-yellow-300 mt-3">
+                                  <p className="text-xs sm:text-sm text-yellow-300 mt-3">
                                     Please transfer the exact amount to the above account. After payment, proceed to submit your order.
                                   </p>
                                 </div>
                               );
                             }
                             return null;
-                          })()}
+                          })()} 
                         </div>
                       )}
 
@@ -498,31 +498,31 @@ export default function CheckoutPage() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.5 }}
                   >
-                    <h2 className="text-2xl font-orbitron font-bold mb-6">Confirm Your Order</h2>
+                    <h2 className="text-xl sm:text-2xl font-orbitron font-bold mb-4 sm:mb-6">Confirm Your Order</h2>
                     
-                    <div className="space-y-4 bg-primary-dark rounded-lg p-6">
-                      <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-4 bg-primary-dark rounded-lg p-4 sm:p-6">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                         <div>
-                          <p className="text-gray-400 text-sm">Name</p>
-                          <p className="font-semibold">{formData.name}</p>
+                          <p className="text-gray-400 text-xs sm:text-sm">Name</p>
+                          <p className="font-semibold text-sm sm:text-base">{formData.name}</p>
                         </div>
                         <div>
-                          <p className="text-gray-400 text-sm">Email</p>
-                          <p className="font-semibold">{formData.email}</p>
+                          <p className="text-gray-400 text-xs sm:text-sm">Email</p>
+                          <p className="font-semibold text-sm sm:text-base">{formData.email}</p>
                         </div>
                         <div>
-                          <p className="text-gray-400 text-sm">Phone</p>
-                          <p className="font-semibold">{formData.phone}</p>
+                          <p className="text-gray-400 text-xs sm:text-sm">Phone</p>
+                          <p className="font-semibold text-sm sm:text-base">{formData.phone}</p>
                         </div>
                         <div>
-                          <p className="text-gray-400 text-sm">Payment Method</p>
-                          <p className="font-semibold">{formData.bank}</p>
+                          <p className="text-gray-400 text-xs sm:text-sm">Payment Method</p>
+                          <p className="font-semibold text-sm sm:text-base">{formData.bank}</p>
                         </div>
                       </div>
                     </div>
 
-                    <div className="mt-6 p-4 bg-yellow-900/20 border border-yellow-600 rounded-lg">
-                      <p className="text-yellow-300 text-sm">
+                    <div className="mt-4 sm:mt-6 p-3 sm:p-4 bg-yellow-900/20 border border-yellow-600 rounded-lg">
+                      <p className="text-yellow-300 text-xs sm:text-sm">
                         <strong>Important:</strong> Please ensure all information is correct. 
                         Your VPN key will be sent to the provided email address after payment verification.
                       </p>
@@ -531,14 +531,14 @@ export default function CheckoutPage() {
                 )}
 
                 {/* Navigation Buttons */}
-                <div className="flex justify-between mt-8">
+                <div className="flex justify-between mt-6 sm:mt-8">
                   {currentStep > 1 && (
                     <motion.button
                       type="button"
                       onClick={prevStep}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-500 transition-colors"
+                      className="px-4 sm:px-6 py-2 sm:py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-500 transition-colors text-sm sm:text-base"
                     >
                       Previous
                     </motion.button>
@@ -551,7 +551,7 @@ export default function CheckoutPage() {
                         onClick={nextStep}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        className="px-6 py-3 bg-gradient-to-r from-neon-cyan to-neon-blue text-primary-dark font-semibold rounded-lg hover:shadow-lg hover:shadow-neon-cyan/25 transition-all duration-300"
+                        className="px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-neon-cyan to-neon-blue text-primary-dark font-semibold rounded-lg hover:shadow-lg hover:shadow-neon-cyan/25 transition-all duration-300 text-sm sm:text-base"
                       >
                         Next Step
                       </motion.button>
@@ -560,7 +560,7 @@ export default function CheckoutPage() {
                         type="submit"
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        className="px-8 py-3 bg-gradient-to-r from-neon-cyan to-neon-blue text-primary-dark font-semibold rounded-lg hover:shadow-lg hover:shadow-neon-cyan/25 transition-all duration-300"
+                        className="px-6 sm:px-8 py-2 sm:py-3 bg-gradient-to-r from-neon-cyan to-neon-blue text-primary-dark font-semibold rounded-lg hover:shadow-lg hover:shadow-neon-cyan/25 transition-all duration-300 text-sm sm:text-base"
                       >
                         Submit Order
                       </motion.button>
@@ -584,19 +584,19 @@ export default function CheckoutPage() {
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="bg-primary-secondary rounded-xl p-8 max-w-md w-full border border-neon-cyan"
+            className="bg-primary-secondary rounded-xl p-6 sm:p-8 max-w-md w-full border border-neon-cyan"
           >
             <div className="text-center">
-              <div className="w-16 h-16 bg-neon-cyan rounded-full flex items-center justify-center mx-auto mb-4">
-                <Check className="h-8 w-8 text-primary-dark" />
+              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-neon-cyan rounded-full flex items-center justify-center mx-auto mb-4">
+                <Check className="h-6 w-6 sm:h-8 sm:w-8 text-primary-dark" />
               </div>
-              <h3 className="text-2xl font-orbitron font-bold mb-4">Order Submitted!</h3>
-              <p className="text-gray-300 mb-6">
+              <h3 className="text-xl sm:text-2xl font-orbitron font-bold mb-4">Order Submitted!</h3>
+              <p className="text-gray-300 mb-6 text-sm sm:text-base">
                 Your order has been received. We'll verify your payment and send the VPN key to your email within 24 hours.
               </p>
               <Link
                 href="/orders"
-                className="inline-block w-full bg-gradient-to-r from-neon-cyan to-neon-blue text-primary-dark font-semibold py-3 rounded-lg hover:shadow-lg hover:shadow-neon-cyan/25 transition-all duration-300"
+                className="inline-block w-full bg-gradient-to-r from-neon-cyan to-neon-blue text-primary-dark font-semibold py-2 sm:py-3 rounded-lg hover:shadow-lg hover:shadow-neon-cyan/25 transition-all duration-300 text-sm sm:text-base"
               >
                 View Orders
               </Link>

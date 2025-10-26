@@ -98,20 +98,20 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-dark via-primary-secondary to-primary-dark flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
+    <div className="min-h-screen bg-gradient-to-br from-primary-dark via-primary-secondary to-primary-dark flex items-center justify-center px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="max-w-md w-full space-y-8"
+        className="max-w-md w-full space-y-6 sm:space-y-8"
       >
         <div className="text-center">
-          <Link href="/" className="text-3xl font-orbitron font-bold text-neon-cyan">
+          <Link href="/" className="text-2xl sm:text-3xl font-orbitron font-bold text-neon-cyan">
             Kage VPN
           </Link>
-          <h2 className="mt-6 text-2xl font-bold text-white">
+          <h2 className="mt-4 sm:mt-6 text-xl sm:text-2xl font-bold text-white">
             Create your account
           </h2>
-          <p className="mt-2 text-gray-400">
+          <p className="mt-2 text-gray-400 text-sm sm:text-base">
             Or{' '}
             <Link
               href="/login"
@@ -126,7 +126,7 @@ export default function RegisterPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="mt-8 space-y-6"
+          className="mt-6 sm:mt-8 space-y-4 sm:space-y-6"
           onSubmit={handleSubmit}
         >
           <div className="space-y-4">
@@ -136,7 +136,7 @@ export default function RegisterPage() {
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <User className="h-5 w-5 text-gray-400" />
+                  <User className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
                 </div>
                 <input
                   id="name"
@@ -146,7 +146,7 @@ export default function RegisterPage() {
                   required
                   value={formData.name}
                   onChange={handleInputChange}
-                  className="block w-full pl-10 pr-3 py-3 border border-primary-secondary rounded-lg bg-primary-dark text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-neon-cyan focus:border-transparent transition-colors"
+                  className="block w-full pl-9 sm:pl-10 pr-3 py-2 sm:py-3 border border-primary-secondary rounded-lg bg-primary-dark text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-neon-cyan focus:border-transparent transition-colors text-sm sm:text-base"
                   placeholder="Enter your full name"
                 />
               </div>
@@ -158,7 +158,7 @@ export default function RegisterPage() {
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-gray-400" />
+                  <Mail className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
                 </div>
                 <input
                   id="email"
@@ -168,7 +168,7 @@ export default function RegisterPage() {
                   required
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="block w-full pl-10 pr-3 py-3 border border-primary-secondary rounded-lg bg-primary-dark text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-neon-cyan focus:border-transparent transition-colors"
+                  className="block w-full pl-9 sm:pl-10 pr-3 py-2 sm:py-3 border border-primary-secondary rounded-lg bg-primary-dark text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-neon-cyan focus:border-transparent transition-colors text-sm sm:text-base"
                   placeholder="Enter your email"
                 />
               </div>
@@ -180,7 +180,7 @@ export default function RegisterPage() {
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-gray-400" />
+                  <Lock className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
                 </div>
                 <input
                   id="password"
@@ -190,7 +190,7 @@ export default function RegisterPage() {
                   required
                   value={formData.password}
                   onChange={handleInputChange}
-                  className="block w-full pl-10 pr-10 py-3 border border-primary-secondary rounded-lg bg-primary-dark text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-neon-cyan focus:border-transparent transition-colors"
+                  className="block w-full pl-9 sm:pl-10 pr-10 py-2 sm:py-3 border border-primary-secondary rounded-lg bg-primary-dark text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-neon-cyan focus:border-transparent transition-colors text-sm sm:text-base"
                   placeholder="Create a password"
                 />
                 <button
@@ -199,9 +199,9 @@ export default function RegisterPage() {
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? (
-                    <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-300" />
+                    <EyeOff className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 hover:text-gray-300" />
                   ) : (
-                    <Eye className="h-5 w-5 text-gray-400 hover:text-gray-300" />
+                    <Eye className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 hover:text-gray-300" />
                   )}
                 </button>
               </div>
@@ -213,7 +213,7 @@ export default function RegisterPage() {
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-gray-400" />
+                  <Lock className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
                 </div>
                 <input
                   id="confirmPassword"
@@ -223,7 +223,7 @@ export default function RegisterPage() {
                   required
                   value={formData.confirmPassword}
                   onChange={handleInputChange}
-                  className="block w-full pl-10 pr-10 py-3 border border-primary-secondary rounded-lg bg-primary-dark text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-neon-cyan focus:border-transparent transition-colors"
+                  className="block w-full pl-9 sm:pl-10 pr-10 py-2 sm:py-3 border border-primary-secondary rounded-lg bg-primary-dark text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-neon-cyan focus:border-transparent transition-colors text-sm sm:text-base"
                   placeholder="Confirm your password"
                 />
                 <button
@@ -232,25 +232,25 @@ export default function RegisterPage() {
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 >
                   {showConfirmPassword ? (
-                    <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-300" />
+                    <EyeOff className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 hover:text-gray-300" />
                   ) : (
-                    <Eye className="h-5 w-5 text-gray-400 hover:text-gray-300" />
+                    <Eye className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 hover:text-gray-300" />
                   )}
                 </button>
               </div>
             </div>
           </div>
 
-          <div className="flex items-center">
+          <div className="flex items-start sm:items-center">
             <input
               id="agreeToTerms"
               name="agreeToTerms"
               type="checkbox"
               checked={formData.agreeToTerms}
               onChange={handleInputChange}
-              className="h-4 w-4 text-neon-cyan focus:ring-neon-cyan border-primary-secondary rounded bg-primary-dark"
+              className="h-4 w-4 text-neon-cyan focus:ring-neon-cyan border-primary-secondary rounded bg-primary-dark mt-0.5 sm:mt-0 flex-shrink-0"
             />
-            <label htmlFor="agreeToTerms" className="ml-2 block text-sm text-gray-300">
+            <label htmlFor="agreeToTerms" className="ml-2 block text-xs sm:text-sm text-gray-300">
               I agree to the{' '}
               <Link href="/terms" className="text-neon-cyan hover:text-neon-cyan/80 transition-colors">
                 Terms of Service
@@ -266,17 +266,17 @@ export default function RegisterPage() {
             <LoadingButton
               type="submit"
               loading={isLoading}
-              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-primary-dark bg-neon-cyan hover:bg-neon-cyan/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neon-cyan transition-colors"
+              className="group relative w-full flex justify-center py-2 sm:py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-primary-dark bg-neon-cyan hover:bg-neon-cyan/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neon-cyan transition-colors"
             >
               <span className="absolute left-0 inset-y-0 flex items-center pl-3">
-                <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 group-hover:translate-x-1 transition-transform" />
               </span>
               Create account
             </LoadingButton>
           </div>
 
           <div className="text-center">
-            <p className="text-sm text-gray-400">
+            <p className="text-xs sm:text-sm text-gray-400">
               Already have an account?{' '}
               <Link
                 href="/login"

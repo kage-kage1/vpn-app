@@ -256,7 +256,7 @@ export default function HomePage() {
             transition={{ duration: 0.8 }}
             className="text-center"
           >
-            <h1 className="text-4xl md:text-6xl font-orbitron font-bold mb-6">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-orbitron font-bold mb-4 sm:mb-6 px-4">
               {heroTitle.includes('Kage VPN Store') ? (
                 <>
                   {heroTitle.split('Kage VPN Store')[0]}
@@ -267,7 +267,7 @@ export default function HomePage() {
                 heroTitle
               )}
             </h1>
-            <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto">
+            <p className="text-lg sm:text-xl md:text-2xl text-gray-300 mb-6 sm:mb-8 max-w-3xl mx-auto px-4">
               {heroSubtitle}
             </p>
             <motion.div
@@ -276,10 +276,10 @@ export default function HomePage() {
             >
               <Link
                 href="/products"
-                className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-neon-cyan to-neon-blue text-primary-dark font-semibold rounded-lg hover:shadow-lg hover:shadow-neon-cyan/25 transition-all duration-300"
+                className="inline-flex items-center px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-neon-cyan to-neon-blue text-primary-dark font-semibold rounded-lg hover:shadow-lg hover:shadow-neon-cyan/25 transition-all duration-300 text-sm sm:text-base"
               >
                 Shop Now
-                <ArrowRight className="ml-2 h-5 w-5" />
+                <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
               </Link>
             </motion.div>
           </motion.div>
@@ -288,14 +288,14 @@ export default function HomePage() {
 
       {/* Promo Banner */}
       {promoBannerEnabled && settingsLoaded && (
-        <section className="py-4 bg-gradient-to-r from-neon-cyan/20 to-neon-blue/20">
+        <section className="py-2 sm:py-4 bg-gradient-to-r from-neon-cyan/20 to-neon-blue/20 overflow-hidden">
           <motion.div
             key={`${promoBannerText}-${settingsLoaded}-${Date.now()}`}
             animate={{ x: [-1000, 1000] }}
             transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
             className="whitespace-nowrap"
           >
-            <span className="text-lg font-semibold text-neon-cyan">
+            <span className="text-sm sm:text-lg font-semibold text-neon-cyan px-4">
               {promoBannerText}
             </span>
           </motion.div>
@@ -303,82 +303,82 @@ export default function HomePage() {
       )}
 
       {/* Features Section */}
-      <section className="py-20 bg-primary-dark/50">
+      <section className="py-12 sm:py-16 lg:py-20 bg-primary-dark/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-center mb-16"
+            className="text-center mb-12 sm:mb-16"
           >
-            <h2 className="text-3xl md:text-4xl font-orbitron font-bold mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-orbitron font-bold mb-4">
               {featuresTitle}
             </h2>
-            <p className="text-gray-300 text-lg mb-4">
+            <p className="text-gray-300 text-base sm:text-lg mb-4 px-4">
               {featuresSubtitle}
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-center p-6 rounded-lg bg-primary-light/20 border border-neon-cyan/20"
+              className="text-center p-4 sm:p-6 rounded-lg bg-primary-light/20 border border-neon-cyan/20"
             >
-              <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-neon-cyan to-neon-blue rounded-full flex items-center justify-center">
-                <Shield className="h-8 w-8 text-primary-dark" />
+              <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 bg-gradient-to-r from-neon-cyan to-neon-blue rounded-full flex items-center justify-center">
+                <Shield className="h-6 w-6 sm:h-8 sm:w-8 text-primary-dark" />
               </div>
-              <h3 className="text-xl font-semibold mb-2">Secure & Private</h3>
-              <p className="text-gray-300">Premium VPN services with military-grade encryption to protect your online privacy.</p>
+              <h3 className="text-lg sm:text-xl font-semibold mb-2">Secure & Private</h3>
+              <p className="text-gray-300 text-sm sm:text-base">Premium VPN services with military-grade encryption to protect your online privacy.</p>
             </motion.div>
 
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-center p-6 rounded-lg bg-primary-light/20 border border-neon-cyan/20"
+              className="text-center p-4 sm:p-6 rounded-lg bg-primary-light/20 border border-neon-cyan/20"
             >
-              <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-neon-cyan to-neon-blue rounded-full flex items-center justify-center">
-                <Zap className="h-8 w-8 text-primary-dark" />
+              <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 bg-gradient-to-r from-neon-cyan to-neon-blue rounded-full flex items-center justify-center">
+                <Zap className="h-6 w-6 sm:h-8 sm:w-8 text-primary-dark" />
               </div>
-              <h3 className="text-xl font-semibold mb-2">Lightning Fast</h3>
-              <p className="text-gray-300">Instant delivery and activation of your VPN accounts with 24/7 customer support.</p>
+              <h3 className="text-lg sm:text-xl font-semibold mb-2">Lightning Fast</h3>
+              <p className="text-gray-300 text-sm sm:text-base">Instant delivery and activation of your VPN accounts with 24/7 customer support.</p>
             </motion.div>
 
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              className="text-center p-6 rounded-lg bg-primary-light/20 border border-neon-cyan/20"
+              className="text-center p-4 sm:p-6 rounded-lg bg-primary-light/20 border border-neon-cyan/20"
             >
-              <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-neon-cyan to-neon-blue rounded-full flex items-center justify-center">
-                <Star className="h-8 w-8 text-primary-dark" />
+              <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 bg-gradient-to-r from-neon-cyan to-neon-blue rounded-full flex items-center justify-center">
+                <Star className="h-6 w-6 sm:h-8 sm:w-8 text-primary-dark" />
               </div>
-              <h3 className="text-xl font-semibold mb-2">Best Prices</h3>
-              <p className="text-gray-300">Competitive pricing on all premium VPN services with local payment options.</p>
+              <h3 className="text-lg sm:text-xl font-semibold mb-2">Best Prices</h3>
+              <p className="text-gray-300 text-sm sm:text-base">Competitive pricing on all premium VPN services with local payment options.</p>
             </motion.div>
           </div>
         </div>
       </section>
 
       {/* VPN Products */}
-      <section className="py-20">
+      <section className="py-12 sm:py-16 lg:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-center mb-16"
+            className="text-center mb-12 sm:mb-16"
           >
-            <h2 className="text-3xl md:text-4xl font-orbitron font-bold mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-orbitron font-bold mb-4">
               {productsTitle}
             </h2>
-            <p className="text-gray-300 text-lg mb-4">
+            <p className="text-gray-300 text-base sm:text-lg mb-4 px-4">
               {productsSubtitle}
             </p>
             {allProducts.length > 3 && (
-              <div className="flex justify-center items-center space-x-4 text-sm text-gray-400">
+              <div className="flex flex-col sm:flex-row justify-center items-center space-y-2 sm:space-y-0 sm:space-x-4 text-xs sm:text-sm text-gray-400">
                 <span>Showing {Math.floor(currentIndex / 3) + 1} of {Math.ceil(allProducts.length / 3)} sets</span>
                 <div className="flex space-x-2">
                   {Array.from({ length: Math.ceil(allProducts.length / 3) }).map((_, index) => (
@@ -390,12 +390,12 @@ export default function HomePage() {
                     />
                   ))}
                 </div>
-                <span className="text-neon-cyan">Auto-rotating every 2 minutes</span>
+                <span className="text-neon-cyan text-center">Auto-rotating every 2 minutes</span>
               </div>
             )}
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {loading ? (
               // Loading skeleton
               Array.from({ length: 3 }).map((_, index) => (
@@ -500,40 +500,40 @@ export default function HomePage() {
       </section>
 
       {/* Testimonials */}
-      <section className="py-20 bg-primary-secondary/50">
+      <section className="py-12 sm:py-16 lg:py-20 bg-primary-secondary/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-center mb-16"
+            className="text-center mb-12 sm:mb-16"
           >
-            <h2 className="text-3xl md:text-4xl font-orbitron font-bold mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-orbitron font-bold mb-4">
               {testimonialsTitle}
             </h2>
             {testimonialsSubtitle && (
-              <p className="text-gray-300 text-lg mb-4">
+              <p className="text-gray-300 text-base sm:text-lg mb-4 px-4">
                 {testimonialsSubtitle}
               </p>
             )}
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
             {testimonials.map((testimonial, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
-                className="bg-primary-dark rounded-xl p-6 border border-gray-700"
+                className="bg-primary-dark rounded-xl p-4 sm:p-6 border border-gray-700"
               >
                 <div className="flex items-center mb-4">
                   {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
+                    <Star key={i} className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-400 fill-current" />
                   ))}
                 </div>
-                <p className="text-gray-300 mb-4">"{testimonial.comment}"</p>
-                <p className="font-semibold text-neon-cyan">- {testimonial.name}</p>
+                <p className="text-gray-300 mb-4 text-sm sm:text-base">"{testimonial.comment}"</p>
+                <p className="font-semibold text-neon-cyan text-sm sm:text-base">- {testimonial.name}</p>
               </motion.div>
             ))}
           </div>
@@ -542,12 +542,12 @@ export default function HomePage() {
 
       {/* Floating Chat Button */}
       <motion.div
-        className="fixed bottom-6 right-6 z-50"
+        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50"
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
       >
-        <button className="bg-gradient-to-r from-neon-cyan to-neon-blue text-primary-dark p-4 rounded-full shadow-lg hover:shadow-neon-cyan/25 transition-all duration-300">
-          <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+        <button className="bg-gradient-to-r from-neon-cyan to-neon-blue text-primary-dark p-3 sm:p-4 rounded-full shadow-lg hover:shadow-neon-cyan/25 transition-all duration-300">
+          <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 24 24">
             <path d="M12 0C5.374 0 0 4.975 0 11.111c0 3.497 1.745 6.616 4.472 8.652L4.086 24l4.772-2.498C10.125 21.852 11.055 22 12 22c6.626 0 12-4.975 12-11.111C24 4.975 18.626 0 12 0z"/>
           </svg>
         </button>

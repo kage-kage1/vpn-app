@@ -67,27 +67,27 @@ export default function AdminLoginPage() {
 
   return (
     <div className="admin-login-page">
-      <div className="min-h-screen bg-gradient-to-br from-primary-dark via-primary-secondary to-primary-dark flex items-center justify-center px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-gradient-to-br from-primary-dark via-primary-secondary to-primary-dark flex items-center justify-center px-4 sm:px-6 lg:px-8 py-8">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="max-w-md w-full space-y-8"
+        className="max-w-md w-full space-y-6 sm:space-y-8"
       >
         <div className="text-center">
-          <div className="flex items-center justify-center mb-6">
-            <Shield className="h-12 w-12 text-neon-cyan mr-3" />
-            <Link href="/" className="text-3xl font-orbitron font-bold text-neon-cyan">
+          <div className="flex items-center justify-center mb-4 sm:mb-6">
+            <Shield className="h-10 w-10 sm:h-12 sm:w-12 text-neon-cyan mr-3" />
+            <Link href="/" className="text-2xl sm:text-3xl font-orbitron font-bold text-neon-cyan">
               Kage VPN
             </Link>
           </div>
-          <h2 className="mt-6 text-2xl font-bold text-white">
+          <h2 className="mt-4 sm:mt-6 text-xl sm:text-2xl font-bold text-white">
             Admin Dashboard Login
           </h2>
-          <p className="mt-2 text-gray-400">
+          <p className="mt-2 text-gray-400 text-sm sm:text-base">
             Admin credentials လိုအပ်ပါတယ်
           </p>
-          <div className="mt-4 p-3 bg-orange-500/10 border border-orange-500/20 rounded-lg">
-            <p className="text-orange-400 text-sm">
+          <div className="mt-3 sm:mt-4 p-3 bg-orange-500/10 border border-orange-500/20 rounded-lg">
+            <p className="text-orange-400 text-xs sm:text-sm">
               ⚠️ Admin access only - Unauthorized access is prohibited
             </p>
           </div>
@@ -97,7 +97,7 @@ export default function AdminLoginPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="mt-8 space-y-6"
+          className="mt-6 sm:mt-8 space-y-4 sm:space-y-6"
           onSubmit={handleSubmit}
           suppressHydrationWarning
         >
