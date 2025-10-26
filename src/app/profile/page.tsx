@@ -149,8 +149,8 @@ export default function ProfilePage() {
           },
         });
       }
-    } catch (error) {
-      console.error('Error fetching profile:', error);
+    } catch (err) {
+      console.error('Error fetching profile:', err);
     } finally {
       setLoading(false);
     }
@@ -182,8 +182,8 @@ export default function ProfilePage() {
         const errorData = await response.json();
         error('Failed to update profile', errorData.error || 'Something went wrong');
       }
-    } catch (error) {
-      console.error('Error saving profile:', error);
+    } catch (err) {
+      console.error('Error saving profile:', err);
       error('Failed to update profile', 'Network error occurred');
     } finally {
       setSaving(false);
@@ -241,8 +241,8 @@ export default function ProfilePage() {
       } else {
         error('စကားဝှက် ပြောင်းလဲခြင်း မအောင်မြင်ပါ', data.error || 'Something went wrong');
       }
-    } catch (error) {
-      console.error('Error changing password:', error);
+    } catch (err) {
+      console.error('Error changing password:', err);
       error('စကားဝှက် ပြောင်းလဲခြင်း မအောင်မြင်ပါ', 'Network error occurred');
     } finally {
       setChangingPassword(false);

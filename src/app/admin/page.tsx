@@ -2168,7 +2168,7 @@ function ProductsManagement({ showNotification }: { showNotification: (message: 
 }
 
 // Users Management Component
-function UsersManagement() {
+function UsersManagement({ showNotification }: { showNotification: (message: string, type: 'success' | 'error') => void }) {
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -2260,17 +2260,17 @@ function UsersManagement() {
 
   const handleUpdatePassword = async () => {
     if (!passwordForm.newPassword || !passwordForm.confirmPassword) {
-      error('Validation Error', 'Please fill in all password fields');
+      showNotification('Please fill in all password fields', 'error');
       return;
     }
 
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-      error('Validation Error', 'Passwords do not match');
+      showNotification('Passwords do not match', 'error');
       return;
     }
 
     if (passwordForm.newPassword.length < 6) {
-      error('Validation Error', 'Password must be at least 6 characters long');
+      showNotification('Password must be at least 6 characters long', 'error');
       return;
     }
 
@@ -2292,20 +2292,20 @@ function UsersManagement() {
       if (response.ok) {
         setShowPasswordModal(false);
         setPasswordForm({ newPassword: '', confirmPassword: '' });
-        success('Password Updated', 'Password updated successfully!');
+        showNotification('Password updated successfully!', 'success');
       } else {
         const errorData = await response.json();
-        error('Update Failed', errorData.error || 'Failed to update password');
+        showNotification(errorData.error || 'Failed to update password', 'error');
       }
-    } catch (error) {
-      console.error('Error updating password:', error);
-      error('Network Error', 'Error updating password');
+    } catch (err) {
+      console.error('Error updating password:', err);
+      showNotification('Error updating password', 'error');
     }
   };
 
   const handleDeleteUser = async (user: any) => {
     if (user.role === 'admin') {
-      error('Permission Denied', 'Cannot delete admin users');
+      showNotification('Cannot delete admin users', 'error');
       return;
     }
 
@@ -2323,13 +2323,13 @@ function UsersManagement() {
 
         if (response.ok) {
           await fetchUsers();
-          success('User Deleted', 'User deleted successfully!');
+          showNotification('User deleted successfully!', 'success');
         } else {
-          error('Delete Failed', 'Failed to delete user');
+          showNotification('Failed to delete user', 'error');
         }
-      } catch (error) {
-        console.error('Error deleting user:', error);
-        error('Network Error', 'Error deleting user');
+      } catch (err) {
+        console.error('Error deleting user:', err);
+        showNotification('Error deleting user', 'error');
       }
     }
   };
@@ -3580,7 +3580,7 @@ export default function AdminDashboard() {
           )}
 
           {activeTab === 'users' && (
-            <UsersManagement />
+            <UsersManagement showNotification={showNotification} />
           )}
 
           {activeTab === 'settings' && (
