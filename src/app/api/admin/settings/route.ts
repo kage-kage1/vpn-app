@@ -8,7 +8,14 @@ export async function GET(request: NextRequest) {
     await dbConnect();
     
     // Require admin authentication
-    const admin = requireAdmin(request);
+    try {
+      const admin = requireAdmin(request);
+    } catch (error) {
+      return NextResponse.json(
+        { error: 'Authentication required' },
+        { status: 401 }
+      );
+    }
     
     let settings = await Settings.findOne();
     
@@ -77,7 +84,14 @@ export async function PUT(request: NextRequest) {
     await dbConnect();
     
     // Require admin authentication
-    const admin = requireAdmin(request);
+    try {
+      const admin = requireAdmin(request);
+    } catch (error) {
+      return NextResponse.json(
+        { error: 'Authentication required' },
+        { status: 401 }
+      );
+    }
     
     const body = await request.json();
     const { 
