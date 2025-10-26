@@ -8,7 +8,14 @@ export async function GET(request: NextRequest) {
     await dbConnect();
     
     // Require admin authentication
-    const admin = requireAdmin(request);
+    try {
+      const admin = requireAdmin(request);
+    } catch (error) {
+      return NextResponse.json(
+        { error: 'Authentication required' },
+        { status: 401 }
+      );
+    }
     
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');
@@ -56,7 +63,14 @@ export async function POST(request: NextRequest) {
     await dbConnect();
     
     // Require admin authentication
-    const admin = requireAdmin(request);
+    try {
+      const admin = requireAdmin(request);
+    } catch (error) {
+      return NextResponse.json(
+        { error: 'Authentication required' },
+        { status: 401 }
+      );
+    }
     
     const productData = await request.json();
     
@@ -78,7 +92,14 @@ export async function PUT(request: NextRequest) {
     await dbConnect();
     
     // Require admin authentication
-    const admin = requireAdmin(request);
+    try {
+      const admin = requireAdmin(request);
+    } catch (error) {
+      return NextResponse.json(
+        { error: 'Authentication required' },
+        { status: 401 }
+      );
+    }
     
     const { id, ...updateData } = await request.json();
     
@@ -110,7 +131,14 @@ export async function DELETE(request: NextRequest) {
     await dbConnect();
     
     // Require admin authentication
-    const admin = requireAdmin(request);
+    try {
+      const admin = requireAdmin(request);
+    } catch (error) {
+      return NextResponse.json(
+        { error: 'Authentication required' },
+        { status: 401 }
+      );
+    }
     
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
