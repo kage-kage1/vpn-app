@@ -198,7 +198,7 @@ function PaymentMethodsSettings({ showNotification }: { showNotification: (messa
   };
 
   const handleSaveEdit = async () => {
-    if (!editingMethod.name || !editingMethod.number || !editingMethod.accountName) {
+    if (!editingMethod.name || !editingMethod.number || !editingMethod.accountName || !editingMethod.phoneNumber) {
       showNotification('All fields are required', 'error');
       return;
     }
@@ -221,7 +221,7 @@ function PaymentMethodsSettings({ showNotification }: { showNotification: (messa
   };
 
   const handleAddNew = async () => {
-    if (!newMethod.name || !newMethod.number || !newMethod.accountName) {
+    if (!newMethod.name || !newMethod.number || !newMethod.accountName || !newMethod.phoneNumber) {
       showNotification('All fields are required', 'error');
       return;
     }
@@ -325,6 +325,16 @@ function PaymentMethodsSettings({ showNotification }: { showNotification: (messa
                     />
                   </div>
                 </div>
+                <div>
+                  <label className="block text-sm text-gray-400 mb-1">Phone Number</label>
+                  <input
+                    type="text"
+                    value={editingMethod.phoneNumber || ''}
+                    onChange={(e) => setEditingMethod({ ...editingMethod, phoneNumber: e.target.value })}
+                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-neon-cyan"
+                    placeholder="09123456789"
+                  />
+                </div>
                 <div className="flex justify-end space-x-2">
                   <button
                     onClick={() => setEditingMethod(null)}
@@ -424,6 +434,16 @@ function PaymentMethodsSettings({ showNotification }: { showNotification: (messa
                   onChange={(e) => setNewMethod({ ...newMethod, accountName: e.target.value })}
                   className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-neon-cyan"
                   placeholder="Kage VPN Store"
+                />
+              </div>
+              <div>
+                <label className="block text-sm text-gray-400 mb-1">Phone Number</label>
+                <input
+                  type="text"
+                  value={newMethod.phoneNumber}
+                  onChange={(e) => setNewMethod({ ...newMethod, phoneNumber: e.target.value })}
+                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-neon-cyan"
+                  placeholder="09123456789"
                 />
               </div>
             </div>
@@ -2721,6 +2741,12 @@ export default function AdminDashboard() {
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [sessionTimeout, setSessionTimeout] = useState('30');
   const [backupLoading, setBackupLoading] = useState(false);
+  const [showAdminPasswordModal, setShowAdminPasswordModal] = useState(false);
+  const [adminPasswordForm, setAdminPasswordForm] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  });
   
   const [dashboardData, setDashboardData] = useState<{
     stats: DashboardStat[];
@@ -3035,6 +3061,50 @@ export default function AdminDashboard() {
       }
     } catch (error) {
       showNotification('Failed to update session timeout', 'error');
+    }
+  };
+
+  const handleChangeAdminPassword = async () => {
+    if (!adminPasswordForm.currentPassword || !adminPasswordForm.newPassword || !adminPasswordForm.confirmPassword) {
+      showNotification('Please fill in all password fields', 'error');
+      return;
+    }
+
+    if (adminPasswordForm.newPassword !== adminPasswordForm.confirmPassword) {
+      showNotification('New passwords do not match', 'error');
+      return;
+    }
+
+    if (adminPasswordForm.newPassword.length < 6) {
+      showNotification('Password must be at least 6 characters long', 'error');
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('admin-token');
+      const response = await fetch('/api/admin/change-password', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          currentPassword: adminPasswordForm.currentPassword,
+          newPassword: adminPasswordForm.newPassword
+        }),
+      });
+
+      if (response.ok) {
+        setShowAdminPasswordModal(false);
+        setAdminPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
+        showNotification('Admin password updated successfully!', 'success');
+      } else {
+        const errorData = await response.json();
+        showNotification(errorData.error || 'Failed to update password', 'error');
+      }
+    } catch (err) {
+      console.error('Error updating admin password:', err);
+      showNotification('Error updating password', 'error');
     }
   };
 
@@ -3626,7 +3696,10 @@ export default function AdminDashboard() {
                     <div className="p-4 bg-gray-800/50 rounded-lg">
                       <h3 className="font-medium mb-2">Change Admin Password</h3>
                       <p className="text-sm text-gray-400 mb-4">Update your admin password for better security</p>
-                      <button className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors">
+                      <button 
+                        onClick={() => setShowAdminPasswordModal(true)}
+                        className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors"
+                      >
                         Change Password
                       </button>
                     </div>
@@ -3758,8 +3831,178 @@ export default function AdminDashboard() {
         </div>
       </div>
 
+      {/* Admin Password Change Modal */}
+      <AnimatePresence>
+        {showAdminPasswordModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-primary-secondary rounded-xl p-6 w-full max-w-md mx-4 border border-gray-700"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-xl font-semibold text-neon-cyan">Change Admin Password</h3>
+                <button
+                  onClick={() => setShowAdminPasswordModal(false)}
+                  className="text-gray-400 hover:text-white"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                    Current Password
+                  </label>
+                  <input
+                    type="password"
+                    value={adminPasswordForm.currentPassword}
+                    onChange={(e) => setAdminPasswordForm(prev => ({ ...prev, currentPassword: e.target.value }))}
+                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-neon-cyan"
+                    placeholder="Enter current password"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                    New Password
+                  </label>
+                  <input
+                    type="password"
+                    value={adminPasswordForm.newPassword}
+                    onChange={(e) => setAdminPasswordForm(prev => ({ ...prev, newPassword: e.target.value }))}
+                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-neon-cyan"
+                    placeholder="Enter new password"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                    Confirm New Password
+                  </label>
+                  <input
+                    type="password"
+                    value={adminPasswordForm.confirmPassword}
+                    onChange={(e) => setAdminPasswordForm(prev => ({ ...prev, confirmPassword: e.target.value }))}
+                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-neon-cyan"
+                    placeholder="Confirm new password"
+                  />
+                </div>
+              </div>
+
+              <div className="flex space-x-3 mt-6">
+                <button
+                  onClick={() => setShowAdminPasswordModal(false)}
+                  className="flex-1 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-500 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleChangeAdminPassword}
+                  className="flex-1 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors font-semibold"
+                >
+                  Update Password
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Toast Container */}
       <ToastContainer toasts={toasts} onClose={removeToast} />
+
+      {/* Admin Password Change Modal */}
+      <AnimatePresence>
+        {showAdminPasswordModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-gray-800 rounded-lg p-6 w-full max-w-md mx-4"
+            >
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-semibold text-white">Change Admin Password</h3>
+                <button
+                  onClick={() => setShowAdminPasswordModal(false)}
+                  className="text-gray-400 hover:text-white"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                    Current Password
+                  </label>
+                  <input
+                    type="password"
+                    value={adminPasswordForm.currentPassword}
+                    onChange={(e) => setAdminPasswordForm(prev => ({ ...prev, currentPassword: e.target.value }))}
+                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-neon-cyan"
+                    placeholder="Enter current password"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                    New Password
+                  </label>
+                  <input
+                    type="password"
+                    value={adminPasswordForm.newPassword}
+                    onChange={(e) => setAdminPasswordForm(prev => ({ ...prev, newPassword: e.target.value }))}
+                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-neon-cyan"
+                    placeholder="Enter new password"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                    Confirm New Password
+                  </label>
+                  <input
+                    type="password"
+                    value={adminPasswordForm.confirmPassword}
+                    onChange={(e) => setAdminPasswordForm(prev => ({ ...prev, confirmPassword: e.target.value }))}
+                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-neon-cyan"
+                    placeholder="Confirm new password"
+                  />
+                </div>
+              </div>
+
+              <div className="flex space-x-3 mt-6">
+                <button
+                  onClick={() => setShowAdminPasswordModal(false)}
+                  className="flex-1 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-500 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleChangeAdminPassword}
+                  className="flex-1 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors font-semibold"
+                >
+                  Update Password
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
