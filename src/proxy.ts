@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   
   // Skip maintenance check for admin routes, API routes, and maintenance page itself
@@ -30,7 +30,7 @@ export async function middleware(request: NextRequest) {
       }
     }
   } catch (error) {
-    console.error('Middleware error checking maintenance mode:', error);
+    console.error('Proxy error checking maintenance mode:', error);
     // If there's an error checking maintenance mode, allow the request to continue
   }
 

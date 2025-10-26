@@ -1,1 +1,0 @@
-// This file has been removed as cart functionality is no longer needed
