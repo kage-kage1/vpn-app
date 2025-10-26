@@ -10,8 +10,9 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     await dbConnect();
     
     // Require admin authentication
+    let admin;
     try {
-      const admin = requireAdmin(request);
+      admin = requireAdmin(request);
     } catch (error) {
       return NextResponse.json(
         { error: 'Authentication required' },
