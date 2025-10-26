@@ -75,8 +75,8 @@ export default function AdminProfilesPage() {
         console.error('Failed to fetch profiles:', response.status);
         setProfiles([]);
       }
-    } catch (error) {
-      console.error('Error fetching profiles:', error);
+    } catch (err) {
+      console.error('Error fetching profiles:', err);
       setProfiles([]);
     } finally {
       setLoading(false);

@@ -698,15 +698,11 @@ function OrdersManagement({ searchTerm, setSearchTerm, showNotification }: {
   const fetchOrders = async () => {
     setLoading(true);
     try {
-      console.log('Fetching admin orders...');
-      
       // Get auth token from localStorage or cookies
       const token = localStorage.getItem('admin-token') || document.cookie
         .split('; ')
         .find(row => row.startsWith('admin-token='))
         ?.split('=')[1];
-
-      console.log('Auth token:', token ? 'Found' : 'Not found');
 
       if (!token) {
         showNotification('Authentication required. Please login again.', 'error');
@@ -714,7 +710,6 @@ function OrdersManagement({ searchTerm, setSearchTerm, showNotification }: {
       }
 
       const url = `/api/admin/orders?page=${currentPage}&limit=10&search=${searchTerm}`;
-      console.log('Fetching from URL:', url);
 
       const response = await fetch(url, {
         headers: {
@@ -722,8 +717,6 @@ function OrdersManagement({ searchTerm, setSearchTerm, showNotification }: {
           'Content-Type': 'application/json',
         },
       });
-
-      console.log('Response status:', response.status);
 
       if (!response.ok) {
         if (response.status === 401) {
@@ -736,7 +729,6 @@ function OrdersManagement({ searchTerm, setSearchTerm, showNotification }: {
       }
 
       const data = await response.json();
-      console.log('Raw orders data:', data);
       
       if (!data.orders || !Array.isArray(data.orders)) {
         console.error('Invalid orders data structure:', data);
@@ -766,19 +758,6 @@ function OrdersManagement({ searchTerm, setSearchTerm, showNotification }: {
           status: order.paymentId.status
         } : null
       }));
-      
-      console.log('Transformed orders:', transformedOrders);
-      console.log('Raw API response:', data.orders); // Debug log
-      
-      // Additional debug for payment data
-      data.orders.forEach((order: any, index: number) => {
-        console.log(`Frontend Order ${index + 1}:`, {
-          id: order._id,
-          status: order.status,
-          paymentId: order.paymentId ? 'Present' : 'Null',
-          paymentData: order.paymentId
-        });
-      });
       
       setOrders(transformedOrders);
       setTotalPages(data.totalPages);
@@ -2735,13 +2714,6 @@ export default function AdminDashboard() {
   const [searchTerm, setSearchTerm] = useState('');
   const [isClient, setIsClient] = useState(false);
   const { toasts, success, error, warning, info, removeToast } = useToast();
-
-  console.log('AdminDashboard render:', { 
-    adminUser: adminUser ? { id: adminUser._id, role: adminUser.role } : null, 
-    authLoading, 
-    isAdmin, 
-    isClient 
-  });
   
   // Settings state
   const [maintenanceMode, setMaintenanceMode] = useState(false);
@@ -2804,11 +2776,9 @@ export default function AdminDashboard() {
         try {
           const token = localStorage.getItem('admin-token');
           if (!token) {
-            console.log('No admin token found in localStorage during verification');
             throw new Error('No token found');
           }
           
-          console.log('Verifying admin token...');
           // Use a simpler endpoint for token verification instead of stats
           const response = await fetch('/api/admin/verify', {
             headers: {
@@ -2818,11 +2788,8 @@ export default function AdminDashboard() {
           });
           
           if (!response.ok) {
-            console.log('Token verification failed with status:', response.status);
             throw new Error('Token verification failed');
           }
-          
-          console.log('Admin token verified successfully');
         } catch (error) {
           console.warn('Token verification failed, redirecting to login:', error);
           localStorage.removeItem('admin-user');
@@ -2840,12 +2807,8 @@ export default function AdminDashboard() {
 
   // Fetch dashboard data from API
   useEffect(() => {
-    console.log('Dashboard useEffect triggered:', { isClient, adminUser: !!adminUser, isAdmin });
     if (isClient && adminUser && isAdmin) {
-      console.log('Calling fetchDashboardData...');
       fetchDashboardData();
-    } else {
-      console.log('Not calling fetchDashboardData:', { isClient, adminUser: !!adminUser, isAdmin });
     }
   }, [adminUser, isAdmin, isClient]);
 
@@ -2856,12 +2819,6 @@ export default function AdminDashboard() {
         .split('; ')
         .find(row => row.startsWith('admin-token='))
         ?.split('=')[1];
-
-      console.log('Fetching dashboard data...');
-      console.log('Token from localStorage:', localStorage.getItem('admin-token') ? 'Found' : 'Not found');
-      console.log('Token from cookies:', document.cookie.includes('admin-token') ? 'Found' : 'Not found');
-      console.log('All localStorage keys:', Object.keys(localStorage));
-      console.log('All cookies:', document.cookie);
 
       if (!token) {
         console.error('No admin token found for dashboard stats');
@@ -2877,7 +2834,6 @@ export default function AdminDashboard() {
       });
       if (response.ok) {
         const data = await response.json();
-        console.log('Dashboard data received:', data); // Debug log
         
         // Transform API data to match component structure
         const transformedStats = [
@@ -2923,9 +2879,6 @@ export default function AdminDashboard() {
           value: item.count,
           fill: ['#00f5ff', '#0099ff', '#6666ff', '#ff6666', '#66ff66'][index] || '#cccccc'
         })) || [];
-
-        console.log('Transformed sales data:', transformedSalesData); // Debug log
-        console.log('Transformed product data:', transformedProductData); // Debug log
 
         // Transform orders data
         const transformedOrders = data.recentOrders?.map((order: any) => ({
