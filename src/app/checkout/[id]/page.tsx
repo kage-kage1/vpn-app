@@ -1,0 +1,612 @@
+'use client';
+
+import { motion } from 'framer-motion';
+import { ArrowLeft, Check, CreditCard, Phone, Mail, User } from 'lucide-react';
+import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import { useParams } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/hooks/useToast';
+import { ToastContainer } from '@/components/ui/Toast';
+
+const products = {
+  '1': { name: 'ExpressVPN', duration: '1 Month', price: '15,000' },
+  '2': { name: 'ExpressVPN', duration: '6 Months', price: '75,000' },
+  '3': { name: 'ExpressVPN', duration: '12 Months', price: '120,000' },
+  '4': { name: 'NordVPN', duration: '1 Month', price: '12,000' },
+  '5': { name: 'NordVPN', duration: '6 Months', price: '45,000' },
+  '6': { name: 'NordVPN', duration: '12 Months', price: '80,000' },
+  '7': { name: 'Surfshark', duration: '1 Month', price: '10,000' },
+  '8': { name: 'Surfshark', duration: '6 Months', price: '35,000' },
+  '9': { name: 'Surfshark', duration: '12 Months', price: '60,000' },
+};
+
+export default function CheckoutPage() {
+  const params = useParams();
+  const productId = params.id as string;
+  const product = products[productId as keyof typeof products];
+  const { isAuthenticated, loading, user } = useAuth();
+  const { error, success, toasts, removeToast } = useToast();
+  const [currentStep, setCurrentStep] = useState(1);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [paymentMethods, setPaymentMethods] = useState<any[]>([]);
+  const [loadingMethods, setLoadingMethods] = useState(true);
+  const [formData, setFormData] = useState({
+    name: user?.name || '',
+    email: user?.email || '',
+    phone: '',
+    bank: '',
+  });
+
+  // Fetch payment methods from database
+  useEffect(() => {
+    fetchPaymentMethods();
+  }, []);
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!loading && !isAuthenticated) {
+      error('အကောင့်ဝင်ရန် လိုအပ်ပါတယ်', 'ကျေးဇူးပြု၍ အကောင့်ဝင်ပါ');
+      setTimeout(() => {
+        window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname)}`;
+      }, 2000);
+    }
+  }, [isAuthenticated, loading, error]);
+
+  const fetchPaymentMethods = async () => {
+    try {
+      setLoadingMethods(true);
+      const response = await fetch('/api/admin/settings');
+      if (response.ok) {
+        const data = await response.json();
+        const activeMethods = data.settings?.paymentMethods?.filter((method: any) => method.isActive) || [];
+        setPaymentMethods(activeMethods);
+      } else {
+        // Fallback to hardcoded methods if API fails
+        setPaymentMethods([
+          { 
+            id: 'kpay', 
+            name: 'KBZPay',
+            number: '09123456789',
+            accountName: 'Kage VPN Store',
+            phoneNumber: '09123456789'
+          },
+          { 
+            id: 'wavepay', 
+            name: 'WavePay',
+            number: '09987654321',
+            accountName: 'Kage VPN Store',
+            phoneNumber: '09987654321'
+          },
+          { 
+            id: 'ayapay', 
+            name: 'AYA Pay',
+            number: '09456789123',
+            accountName: 'Kage VPN Store',
+            phoneNumber: '09456789123'
+          },
+          { 
+            id: 'cbpay', 
+            name: 'CB Pay',
+            number: '09789123456',
+            accountName: 'Kage VPN Store',
+            phoneNumber: '09789123456'
+          }
+        ]);
+      }
+    } catch (error) {
+      console.error('Error fetching payment methods:', error);
+      // Fallback to hardcoded methods
+      setPaymentMethods([
+        { 
+          id: 'kpay', 
+          name: 'KBZPay',
+          number: '09123456789',
+          accountName: 'Kage VPN Store',
+          phoneNumber: '09123456789'
+        },
+        { 
+          id: 'wavepay', 
+          name: 'WavePay',
+          number: '09987654321',
+          accountName: 'Kage VPN Store',
+          phoneNumber: '09987654321'
+        },
+        { 
+          id: 'ayapay', 
+          name: 'AYA Pay',
+          number: '09456789123',
+          accountName: 'Kage VPN Store',
+          phoneNumber: '09456789123'
+        },
+        { 
+          id: 'cbpay', 
+          name: 'CB Pay',
+          number: '09789123456',
+          accountName: 'Kage VPN Store',
+          phoneNumber: '09789123456'
+        }
+      ]);
+    } finally {
+      setLoadingMethods(false);
+    }
+  };
+
+  // Update form data when user info is available
+  useEffect(() => {
+    if (user) {
+      setFormData(prev => ({
+        ...prev,
+        name: user.name,
+        email: user.email,
+      }));
+    }
+  }, [user]);
+
+  // Show loading while checking authentication
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-primary-dark flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-neon-cyan mx-auto mb-4"></div>
+          <p className="text-gray-300">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't render checkout if not authenticated
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-primary-dark flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-300 mb-4">အကောင့်ဝင်ရန် လိုအပ်ပါတယ်</p>
+          <p className="text-sm text-gray-400">Redirecting to login...</p>
+        </div>
+      </div>
+    );
+  }
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Validate required fields
+    if (!formData.name || !formData.email || !formData.phone || !formData.bank) {
+      error('လိုအပ်သော အချက်အလက်များ ဖြည့်ပါ', 'အမည်၊ အီးမေးလ်၊ ဖုန်းနံပါတ်နှင့် ငွေပေးချေမှုနည်းလမ်း ဖြည့်ရန် လိုအပ်ပါတယ်');
+      return;
+    }
+
+    try {
+      // Create order with customer and payment information
+      const orderData = {
+        userId: user?._id || 'guest',
+        customerInfo: {
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone
+        },
+        paymentMethod: formData.bank,
+        items: [{
+          id: productId,
+          name: product.name,
+          price: parseInt(product.price.replace(',', '')),
+          duration: product.duration,
+          quantity: 1
+        }],
+        total: parseInt(product.price.replace(',', '')),
+        status: 'pending_payment'
+      };
+
+      const response = await fetch('/api/orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(orderData),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        // Store order ID and redirect to payment page
+        const orderId = result.orderId;
+        success('အော်ဒါ အောင်မြင်စွာ တင်သွင်းပြီးပါပြီ', 'ငွေပေးချေမှု စာမျက်နှာသို့ ပြောင်းရွှေ့နေပါတယ်...');
+        setTimeout(() => {
+          window.location.href = `/payment/${orderId}`;
+        }, 1500);
+      } else {
+        error('အော်ဒါ တင်သွင်းမှု မအောင်မြင်ပါ', result.error || 'ကျေးဇူးပြု၍ ထပ်မံကြိုးစားပါ');
+      }
+    } catch (err) {
+      const orderError = err as Error;
+      console.error('Order creation error:', orderError);
+      error('ကွန်ယက် အမှားအယွင်း ဖြစ်နေပါတယ်', 'အင်တာနက် ချိတ်ဆက်မှုကို စစ်ဆေးပြီး ထပ်မံကြိုးစားပါ');
+    }
+  };
+
+  const nextStep = () => {
+    // Validate current step before proceeding
+    if (currentStep === 1) {
+      if (!formData.name || !formData.email || !formData.phone) {
+        error('လိုအပ်သော အချက်အလက်များ ဖြည့်ပါ', 'အမည်၊ အီးမေးလ်နှင့် ဖုန်းနံပါတ် ဖြည့်ရန် လိုအပ်ပါတယ်');
+        return;
+      }
+    } else if (currentStep === 2) {
+      if (!formData.bank) {
+        error('ငွေပေးချေမှုနည်းလမ်း ရွေးချယ်ပါ', 'ကျေးဇူးပြု၍ ငွေပေးချေမှုနည်းလမ်း ရွေးချယ်ပါ');
+        return;
+      }
+    }
+    
+    if (currentStep < 3) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const prevStep = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  if (!product) {
+    return (
+      <div className="min-h-screen bg-primary-dark text-white flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-4">Product Not Found</h1>
+          <Link href="/products" className="text-neon-cyan hover:underline">
+            Back to Products
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-primary-dark text-white">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Back Button */}
+        <div className="mb-8">
+          <Link
+            href="/products"
+            className="flex items-center text-gray-300 hover:text-neon-cyan transition-colors"
+          >
+            <ArrowLeft className="h-5 w-5 mr-2" />
+            Back to Products
+          </Link>
+        </div>
+
+        {/* Progress Bar */}
+        <div className="mb-12">
+          <div className="flex items-center justify-center">
+            {[1, 2, 3].map((step) => (
+              <div key={step} className="flex items-center">
+                <div
+                  className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${
+                    step <= currentStep
+                      ? 'bg-neon-cyan text-primary-dark'
+                      : 'bg-primary-secondary text-gray-400'
+                  }`}
+                >
+                  {step < currentStep ? <Check className="h-5 w-5" /> : step}
+                </div>
+                {step < 3 && (
+                  <div
+                    className={`w-16 h-1 mx-2 ${
+                      step < currentStep ? 'bg-neon-cyan' : 'bg-primary-secondary'
+                    }`}
+                  />
+                )}
+              </div>
+            ))}
+          </div>
+          <div className="flex justify-center mt-4">
+            <div className="text-center">
+              <p className="text-sm text-gray-300">
+                Step {currentStep} of 3: {
+                  currentStep === 1 ? 'Fill Information' :
+                  currentStep === 2 ? 'Payment Information' :
+                  'Confirm Order'
+                }
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Order Summary */}
+          <div className="lg:col-span-1">
+            <div className="bg-primary-secondary rounded-xl p-6 border border-gray-700 sticky top-24">
+              <h3 className="text-xl font-orbitron font-bold mb-4">Order Summary</h3>
+              
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-300">Product:</span>
+                  <span className="font-semibold">{product.name}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-300">Duration:</span>
+                  <span className="font-semibold">{product.duration}</span>
+                </div>
+                <div className="border-t border-gray-600 pt-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-lg font-semibold">Total:</span>
+                    <span className="text-2xl font-bold text-neon-cyan">{product.price} Ks</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Payment Instructions */}
+              <div className="mt-6 p-4 bg-primary-dark rounded-lg border border-gray-600">
+                <h4 className="font-semibold mb-2 text-neon-cyan">Payment Instructions:</h4>
+                <ol className="text-sm text-gray-300 space-y-1">
+                  <li>1. Choose your payment method</li>
+                  <li>2. Transfer the exact amount</li>
+                  <li>3. Submit your order</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+
+          {/* Checkout Form */}
+          <div className="lg:col-span-2">
+            <div className="bg-primary-secondary rounded-xl p-8 border border-gray-700">
+              <form onSubmit={handleSubmit}>
+                {/* Step 1: Personal Information */}
+                {currentStep === 1 && (
+                  <motion.div
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    <h2 className="text-2xl font-orbitron font-bold mb-6">Personal Information</h2>
+                    
+                    <div className="space-y-6">
+                      <div>
+                        <label className="block text-sm font-medium mb-2">
+                          <User className="inline h-4 w-4 mr-2" />
+                          Full Name
+                        </label>
+                        <input
+                          type="text"
+                          name="name"
+                          value={formData.name}
+                          onChange={handleInputChange}
+                          required
+                          className="w-full px-4 py-3 bg-primary-dark border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-neon-cyan transition-colors"
+                          placeholder="Enter your full name"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium mb-2">
+                          <Mail className="inline h-4 w-4 mr-2" />
+                          Email Address
+                        </label>
+                        <input
+                          type="email"
+                          name="email"
+                          value={formData.email}
+                          onChange={handleInputChange}
+                          required
+                          className="w-full px-4 py-3 bg-primary-dark border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-neon-cyan transition-colors"
+                          placeholder="Enter your email"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium mb-2">
+                          <Phone className="inline h-4 w-4 mr-2" />
+                          Phone Number
+                        </label>
+                        <input
+                          type="tel"
+                          name="phone"
+                          value={formData.phone}
+                          onChange={handleInputChange}
+                          required
+                          className="w-full px-4 py-3 bg-primary-dark border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-neon-cyan transition-colors"
+                          placeholder="Enter your phone number"
+                        />
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* Step 2: Payment Information */}
+                {currentStep === 2 && (
+                  <motion.div
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    <h2 className="text-2xl font-orbitron font-bold mb-6">Payment Information</h2>
+                    
+                    <div className="space-y-6">
+                      <div>
+                        <label className="block text-sm font-medium mb-2">
+                          <CreditCard className="inline h-4 w-4 mr-2" />
+                          Select Payment Method
+                        </label>
+                        <select
+                          name="bank"
+                          value={formData.bank}
+                          onChange={handleInputChange}
+                          required
+                          className="w-full px-4 py-3 bg-primary-dark border border-gray-600 rounded-lg text-white focus:outline-none focus:border-neon-cyan transition-colors"
+                        >
+                          <option value="" className="bg-primary-dark text-white">Choose payment method</option>
+                          {loadingMethods ? (
+                            <option value="" className="bg-primary-dark text-white">Loading...</option>
+                          ) : (
+                            paymentMethods.map((method) => (
+                              <option key={method.id} value={method.name} className="bg-primary-dark text-white">
+                                {method.name}
+                              </option>
+                            ))
+                          )}
+                        </select>
+                      </div>
+
+                      {/* Payment Method Details */}
+                      {formData.bank && (
+                        <div className="bg-primary-dark rounded-lg p-4 border border-gray-600">
+                          <h3 className="text-lg font-semibold mb-3 text-neon-cyan">Payment Details</h3>
+                          {(() => {
+                            const selectedMethod = paymentMethods.find(method => method.name === formData.bank);
+                            if (selectedMethod) {
+                              return (
+                                <div className="space-y-2">
+                                  <div>
+                                    <span className="text-gray-400">Account Name: </span>
+                                    <span className="font-semibold text-white">{selectedMethod.accountName}</span>
+                                  </div>
+                                  <div>
+                                    <span className="text-gray-400">Account Number: </span>
+                                    <span className="font-semibold text-white">{selectedMethod.number}</span>
+                                  </div>
+                                  <div>
+                                    <span className="text-gray-400">Phone Number: </span>
+                                    <span className="font-semibold text-white">{selectedMethod.phoneNumber}</span>
+                                  </div>
+                                  <p className="text-sm text-yellow-300 mt-3">
+                                    Please transfer the exact amount to the above account. After payment, proceed to submit your order.
+                                  </p>
+                                </div>
+                              );
+                            }
+                            return null;
+                          })()}
+                        </div>
+                      )}
+
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* Step 3: Confirmation */}
+                {currentStep === 3 && (
+                  <motion.div
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    <h2 className="text-2xl font-orbitron font-bold mb-6">Confirm Your Order</h2>
+                    
+                    <div className="space-y-4 bg-primary-dark rounded-lg p-6">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <p className="text-gray-400 text-sm">Name</p>
+                          <p className="font-semibold">{formData.name}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-400 text-sm">Email</p>
+                          <p className="font-semibold">{formData.email}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-400 text-sm">Phone</p>
+                          <p className="font-semibold">{formData.phone}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-400 text-sm">Payment Method</p>
+                          <p className="font-semibold">{formData.bank}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mt-6 p-4 bg-yellow-900/20 border border-yellow-600 rounded-lg">
+                      <p className="text-yellow-300 text-sm">
+                        <strong>Important:</strong> Please ensure all information is correct. 
+                        Your VPN key will be sent to the provided email address after payment verification.
+                      </p>
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* Navigation Buttons */}
+                <div className="flex justify-between mt-8">
+                  {currentStep > 1 && (
+                    <motion.button
+                      type="button"
+                      onClick={prevStep}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-500 transition-colors"
+                    >
+                      Previous
+                    </motion.button>
+                  )}
+                  
+                  <div className="ml-auto">
+                    {currentStep < 3 ? (
+                      <motion.button
+                        type="button"
+                        onClick={nextStep}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="px-6 py-3 bg-gradient-to-r from-neon-cyan to-neon-blue text-primary-dark font-semibold rounded-lg hover:shadow-lg hover:shadow-neon-cyan/25 transition-all duration-300"
+                      >
+                        Next Step
+                      </motion.button>
+                    ) : (
+                      <motion.button
+                        type="submit"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="px-8 py-3 bg-gradient-to-r from-neon-cyan to-neon-blue text-primary-dark font-semibold rounded-lg hover:shadow-lg hover:shadow-neon-cyan/25 transition-all duration-300"
+                      >
+                        Submit Order
+                      </motion.button>
+                    )}
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Success Modal */}
+      {showSuccess && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+        >
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className="bg-primary-secondary rounded-xl p-8 max-w-md w-full border border-neon-cyan"
+          >
+            <div className="text-center">
+              <div className="w-16 h-16 bg-neon-cyan rounded-full flex items-center justify-center mx-auto mb-4">
+                <Check className="h-8 w-8 text-primary-dark" />
+              </div>
+              <h3 className="text-2xl font-orbitron font-bold mb-4">Order Submitted!</h3>
+              <p className="text-gray-300 mb-6">
+                Your order has been received. We'll verify your payment and send the VPN key to your email within 24 hours.
+              </p>
+              <Link
+                href="/orders"
+                className="inline-block w-full bg-gradient-to-r from-neon-cyan to-neon-blue text-primary-dark font-semibold py-3 rounded-lg hover:shadow-lg hover:shadow-neon-cyan/25 transition-all duration-300"
+              >
+                View Orders
+              </Link>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+
+      {/* Toast Notifications */}
+      <ToastContainer toasts={toasts} onClose={removeToast} />
+    </div>
+  );
+}
