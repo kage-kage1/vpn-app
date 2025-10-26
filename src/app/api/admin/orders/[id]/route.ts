@@ -9,7 +9,14 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     await dbConnect();
     
     // Require admin authentication
-    const admin = requireAdmin(request);
+    try {
+      const admin = requireAdmin(request);
+    } catch (error) {
+      return NextResponse.json(
+        { error: 'Authentication required' },
+        { status: 401 }
+      );
+    }
     
     const { id } = await params;
     
@@ -33,7 +40,14 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     await dbConnect();
     
     // Require admin authentication
-    const admin = requireAdmin(request);
+    try {
+      const admin = requireAdmin(request);
+    } catch (error) {
+      return NextResponse.json(
+        { error: 'Authentication required' },
+        { status: 401 }
+      );
+    }
     
     const { id } = await params;
     const { status } = await request.json();
@@ -60,7 +74,14 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     await dbConnect();
     
     // Require admin authentication
-    const admin = requireAdmin(request);
+    try {
+      const admin = requireAdmin(request);
+    } catch (error) {
+      return NextResponse.json(
+        { error: 'Authentication required' },
+        { status: 401 }
+      );
+    }
     
     const { id } = await params;
     
